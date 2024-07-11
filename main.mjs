@@ -9,7 +9,7 @@ app.use((req, res, next) => {
 	$log(`请求来了: ${req.originalUrl}`, req.headers.host)
 	next() // 继续处理请求
 })
-app.get('/', (req, res) => {
+app.all('/*', (req, res) => {
 	res.send(`请求来了: ${req.originalUrl}  ${req.headers.host}`)
 })
 
