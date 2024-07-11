@@ -9,6 +9,9 @@ app.use((req, res, next) => {
 	$log(`请求来了: ${req.originalUrl}`, req.headers.host)
 	next() // 继续处理请求
 })
+app.get('/', (req, res) => {
+	res.send(`请求来了: ${req.originalUrl}  ${req.headers.host}`)
+})
 
 // 启动服务器并监听指定端口
 app.listen(PORT, () => {
