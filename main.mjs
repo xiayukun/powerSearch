@@ -33,7 +33,7 @@ app.get('/', (req, res) => {
 app.post('/*', (req, res) => {
 	$log('接收到post请求')
 	$log('content-type', req.headers['content-type'])
-	if (req.headers['content-type'] === 'application/xml') {
+	if (req.headers['content-type'] === 'text/xml') {
 		// 解析XML请求体
 		parser.parseString(req.body, (err, result) => {
 			if (err) {
