@@ -5,7 +5,6 @@ import xmlparser from 'express-xml-bodyparser'
 import xml2js from 'xml2js'
 // 用于解析XML格式的请求和回复消息
 const builder = new xml2js.Builder({ rootName: 'xml', headless: true })
-const parser = new xml2js.Parser({ explicitArray: false, explicitRoot: false })
 
 const app = express()
 const PORT = 16853
