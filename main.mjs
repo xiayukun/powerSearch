@@ -1,9 +1,12 @@
 import './src/util/util.mjs'
 import express from 'express'
 import crypto from 'crypto'
+import xml2js from 'xml2js'
 
 const app = express()
 const PORT = 16853
+// 创建一个解析器
+const parser = new xml2js.Parser({ explicitArray: false, explicitRoot: false })
 
 // 创建一个中间件来打印请求链接和请求头
 app.use(async (req, res, next) => {
@@ -29,6 +32,18 @@ app.get('/', (req, res) => {
 })
 app.post('/*', (req, res) => {
 	$log('接收到post请求')
+	if (req.headers['content-type'] === 'application/xml') {
+		// 解析XML请求体
+		parser.parseString(req.body, (err, result) => {
+			if (err) {
+				// 解析错误处理
+				$log('Error parsing XML:', err)
+				return res.status(500).send('Error parsing XML')
+			}
+			// 将解析后的数据添加到req对象中，以便后续处理
+			$log('接收到的消息为：', result)
+		})
+	}
 	// 处理请求...
 	res.send('返回请求')
 })
