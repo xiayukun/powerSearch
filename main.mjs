@@ -27,6 +27,11 @@ app.get('/', (req, res) => {
 		res.send('error')
 	}
 })
+app.post('/*', (req, res) => {
+	$log('接收到post请求')
+	// 处理请求...
+	res.send('返回请求')
+})
 
 // 启动服务器并监听指定端口
 app.listen(PORT, () => {
