@@ -1,0 +1,5 @@
+(node:31578) Warning: Accessing non-existent property 'padLevels' of module exports inside circular dependency
+(Use `node --trace-warnings ...` to show where the warning was created)
+Sat, 20 Jul 2024 10:53:52 GMT body-parser deprecated undefined extended: provide extended option at file:/root/powerSearch/behind/base.mjs:11:21
+2024-07-20 18:53:52 启动服务，端口是 16853
+{"level":"error","message":"Forever detected script was killed by signal: SIGKILL"}

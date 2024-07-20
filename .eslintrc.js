@@ -44,13 +44,11 @@ module.exports = {
 		]
 	},
 	globals: {
-		ifetch: true,
-		global: true,
-		Listen: true,
-		bus: true,
-		ws: true,
 		$log: true,
-		$config: true,
-		$store: true
+		service: true,
+		builder: true,
+		$pool: true,
+		$catch_all: true,
+		$sleep: true
 	}
 }
