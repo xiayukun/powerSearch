@@ -5,8 +5,22 @@ import cheerio from 'cheerio'
 
 // 用于解析XML格式的请求和回复消息
 global.builder = new xml2js.Builder({ rootName: 'xml', headless: true })
+builder.buildObject2 = function (obj) {
+	if (obj.Content) {
+		$log(`向${obj.ToUserName}发送信息：\n`, obj.Content)
+	}
+	return builder.buildObject(...arguments)
+}
 global.$log = function () {
+	// eslint-disable-next-line no-console
 	console.log(moment().format('YYYY-MM-DD HH:mm:ss'), ...arguments)
+}
+
+// 延时执行
+global.$sleep = function (time) {
+	return new Promise((resolve) => {
+		setTimeout(resolve, time)
+	})
 }
 
 // 整理因前端输入原因，可能要更正的sql语句
@@ -101,9 +115,25 @@ export function timeUntilNext710 () {
 	return diff
 }
 
-// 延时执行
-global.$sleep = function (time) {
-	return new Promise((resolve) => {
-		setTimeout(resolve, time)
-	})
+// // 区别动态生成的menu的NO，省的重复
+// export async function diffMenuNO (activeMenu, menu) {
+// 	const menuNo = menu.map((i) => i.NO)
+// 	return activeMenu.map((i) => {
+// 		while (!menuNo.includes(i.NO)) {
+// 			i.NO++
+// 		}
+// 		return i
+// 	})
+// }
+// 使用list整理要发送的消息
+export async function createMessageByList (sendObj) {
+	sendObj.menu.list
+		.filter((i) => i.type !== 'text')
+		.forEach((item) => {
+			sendObj.content += `${item.NO}:${item.title}\n`
+		})
+	const textObj = sendObj.menu.list.find((i) => i === 'text')
+	if (textObj) {
+		sendObj.content += `${textObj.title}\n`
+	}
 }

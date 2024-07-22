@@ -1,4 +1,5 @@
 import { delete_wechat, insert_wechat, insert_wechat_event, delete_mapping_by_wechat, select_powerCount_by_wechat, delete_power_ids } from '../sql/wechat.mjs'
+import getMenuBack from './menu.mjs'
 
 // 关注
 export function event_subscribe (req, res) {
@@ -8,7 +9,7 @@ export function event_subscribe (req, res) {
 	// 发送消息
 	res.type('application/xml')
 	res.send(
-		builder.buildObject({
+		builder.buildObject2({
 			ToUserName: req.body.xml.fromusername[0],
 			FromUserName: req.body.xml.tousername[0],
 			CreateTime: new Date().getTime(),
@@ -41,31 +42,30 @@ export async function event_unsubscribe (req, res) {
 }
 
 // 文字消息
-export function event_text (req, res) {
+export async function event_text (req, res) {
 	const text = req.body.xml.content[0]
 	$log(`来文字消息了：${text}`)
 	insert_wechat_event(req.body.xml)
-	// 发送回复消息
-	res.type('application/xml')
-	// if(['0','1','2','3','4','5','6','7','8','9'].includes(text)){
-
-	// }
-	res.send(
-		builder.buildObject({
-			ToUserName: req.body.xml.fromusername[0],
-			FromUserName: req.body.xml.tousername[0],
-			CreateTime: new Date().getTime(),
-			MsgType: 'text',
-			// Content: `收到\n${text}\n你好`
-			Content: `请输入以下回复(5分钟有效)：
-1:查询电费余额
-2:查询电费详单
-3:电费充值(跳转物业地址)
-4:管理电费账户
-0:绑定账户(可绑定多个账户)
-			`
-		})
-	)
+	try {
+		const sendObj = await getMenuBack(req.body.xml.fromusername[0], text)
+		if (!sendObj || !sendObj.content) {
+			throw Error('没有拉取到回复')
+		}
+		// 发送回复消息
+		res.type('application/xml')
+		res.send(
+			builder.buildObject2({
+				ToUserName: req.body.xml.fromusername[0],
+				FromUserName: req.body.xml.tousername[0],
+				CreateTime: new Date().getTime(),
+				MsgType: 'text',
+				Content: sendObj.content
+			})
+		)
+	} catch (error) {
+		$log(error)
+		res.send('error')
+	}
 }
 
 // 图片消息
@@ -75,7 +75,7 @@ export function event_image (req, res) {
 	// 发送回复消息
 	res.type('application/xml')
 	res.send(
-		builder.buildObject({
+		builder.buildObject2({
 			ToUserName: req.body.xml.fromusername[0],
 			FromUserName: req.body.xml.tousername[0],
 			CreateTime: new Date().getTime(),

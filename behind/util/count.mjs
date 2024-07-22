@@ -13,7 +13,12 @@ export async function countOneDay (power_id) {
 		throw Error('电费数据有问题')
 	}
 	const row = (await select_near_power(power_id))[0][0]
-	const today = moment().format('YYYY-MM-DD')
+	let today
+	if (moment().hour() < 7) {
+		today = moment().add(-1, 'days').format('YYYY-MM-DD')
+	} else {
+		today = moment().format('YYYY-MM-DD')
+	}
 	// 先更新今天的总电量和总金额
 	await update_power_sum({ ...data, power_id, date: today })
 	// 更新充值记录

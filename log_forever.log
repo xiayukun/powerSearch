@@ -1,5 +1,46 @@
-(node:31578) Warning: Accessing non-existent property 'padLevels' of module exports inside circular dependency
+(node:1784) Warning: Accessing non-existent property 'padLevels' of module exports inside circular dependency
 (Use `node --trace-warnings ...` to show where the warning was created)
-Sat, 20 Jul 2024 10:53:52 GMT body-parser deprecated undefined extended: provide extended option at file:/root/powerSearch/behind/base.mjs:11:21
-2024-07-20 18:53:52 启动服务，端口是 16853
+2024-07-22 01:47:14 ------开始定时任务执行---------
+2024-07-22 01:47:14 执行sql 
+			SELECT
+				id
+			FROM
+				power_user
+		
+Sun, 21 Jul 2024 17:47:14 GMT body-parser deprecated undefined extended: provide extended option at file:/root/powerSearch/behind/base.mjs:11:21
+2024-07-22 01:47:14 启动服务，端口是 16853
+2024-07-22 01:47:14 ###开始记录电费数据： 6010921
+2024-07-22 01:47:14 执行sql 
+			SELECT
+				id as power_id,
+				balance,
+				kwh_sum,
+				remark,
+				update_date,
+				power_day.date AS day_date,
+				kwh as day_kwh,
+				power_day.amount AS day_amount,
+				power_recharge.datetime AS recharge_datetime,
+				power_recharge.amount AS amount
+			FROM
+				power_user
+			LEFT JOIN power_day ON power_user.id = power_day.power_id
+			LEFT JOIN power_recharge ON power_recharge.power_id = power_user.id
+			WHERE
+				power_user.id = '6010921'
+			ORDER BY
+				power_day.date DESC,
+				power_recharge.datetime DESC
+			LIMIT 1
+			
+2024-07-22 01:47:14 执行sql 
+			UPDATE power_user
+			SET balance = 61.5275,
+			kwh_sum = 2667.65,
+			update_date = '2024-07-21'
+			WHERE
+				id = '6010921'
+			
+2024-07-22 01:47:14 ###结束记录电费数据： 6010921
+2024-07-22 01:47:17 ------结束定时任务执行---------
 {"level":"error","message":"Forever detected script was killed by signal: SIGKILL"}

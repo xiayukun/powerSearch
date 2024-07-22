@@ -14,3 +14,9 @@ global.$pool = mysql2.createPool({
 	enableKeepAlive: true,
 	keepAliveInitialDelay: 0
 })
+$pool.query2 = function () {
+	$log('执行sql', ...arguments)
+	return $pool.query(...arguments).catch((e) => {
+		$log('sql报错', ...arguments, e)
+	})
+}
