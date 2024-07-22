@@ -2,6 +2,7 @@ import moment from 'moment'
 import xml2js from 'xml2js'
 import axios from 'axios'
 import cheerio from 'cheerio'
+import { select_children_menu_by_menu_id } from '../sql/wechat.mjs'
 
 // 用于解析XML格式的请求和回复消息
 global.builder = new xml2js.Builder({ rootName: 'xml', headless: true })
@@ -22,6 +23,8 @@ global.$sleep = function (time) {
 		setTimeout(resolve, time)
 	})
 }
+// 菜单首页缓存
+global.$mainMenu = (await select_children_menu_by_menu_id(0))[0]
 
 // 整理因前端输入原因，可能要更正的sql语句
 export function format_sql (sql) {

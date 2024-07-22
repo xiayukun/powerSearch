@@ -49,6 +49,7 @@ module.exports = {
 		builder: true,
 		$pool: true,
 		$catch_all: true,
-		$sleep: true
+		$sleep: true,
+		$mainMenu: true
 	}
 }

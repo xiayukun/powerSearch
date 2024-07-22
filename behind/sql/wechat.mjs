@@ -124,23 +124,23 @@ export function delete_power_ids (power_id_list) {
 			`)
 	)
 }
-// 根据微信id查询上次5分钟之内的发送记录
-export function select_wechat_send_history_by_wechat_id_5min (wechat_id) {
-	return $pool.query2(
-		format_sql(`
-			SELECT
-				*
-			FROM
-				wechat_send_history
-			WHERE
-				wechat_id = '${wechat_id}'
-				AND type in ('menu','end')
-				AND datetime >= NOW() - INTERVAL 5 MINUTE
-			ORDER BY datetime DESC
-			LIMIT 1;
-			`)
-	)
-}
+// // 根据微信id查询上次5分钟之内的发送记录
+// export function select_wechat_send_history_by_wechat_id_5min (wechat_id) {
+// 	return $pool.query2(
+// 		format_sql(`
+// 			SELECT
+// 				*
+// 			FROM
+// 				wechat_send_history
+// 			WHERE
+// 				wechat_id = '${wechat_id}'
+// 				AND type in ('menu','end')
+// 				AND datetime >= NOW() - INTERVAL 5 MINUTE
+// 			ORDER BY datetime DESC
+// 			LIMIT 1;
+// 			`)
+// 	)
+// }
 
 // 根据menu_id获取子菜单列表
 export function select_children_menu_by_menu_id (menu_id) {

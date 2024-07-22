@@ -43,11 +43,14 @@ export async function event_unsubscribe (req, res) {
 
 // 文字消息
 export async function event_text (req, res) {
-	const text = req.body.xml.content[0]
-	$log(`来文字消息了：${text}`)
+	$log(`来文字消息了：${req.body.xml.content[0]}`)
 	insert_wechat_event(req.body.xml)
 	try {
-		const sendObj = await getMenuBack(req.body.xml.fromusername[0], text)
+		const sendObj = await getMenuBack(req)
+		if (sendObj === false) {
+			// 等待延时
+			return
+		}
 		if (!sendObj || !sendObj.content) {
 			throw Error('没有拉取到回复')
 		}
