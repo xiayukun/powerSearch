@@ -1,9 +1,10 @@
 import { throlle } from '../util/index.mjs'
 import axios from 'axios'
-import { insert_mapping_wechat_power, insert_power, select_wechat_by_power } from '../sql/power.mjs'
+import { insert_mapping_wechat_power, insert_power, select_all_power_user_data_by_last_date, select_wechat_by_power } from '../sql/power.mjs'
 import { FormData } from 'node-fetch'
 import { select_wechat } from '../sql/wechat.mjs'
 import { countOneDay } from '../util/count.mjs'
+import moment from 'moment'
 
 // 绑定电费账户
 export async function web_api_bind (req, res) {
@@ -47,7 +48,17 @@ export async function web_api_bind (req, res) {
 		// 增加电费账户
 		await insert_power(username, remark)
 		// 先填一天的电费数据
-		countOneDay(username)
+		try {
+			let today
+			if (moment().hour() < 7) {
+				today = moment().add(-1, 'days').format('YYYY-MM-DD')
+			} else {
+				today = moment().format('YYYY-MM-DD')
+			}
+			await countOneDay((await select_all_power_user_data_by_last_date(username))[0][0], today)
+		} catch (error) {
+			$log(error)
+		}
 	}
 	// 增加映射表
 	await insert_mapping_wechat_power(wechat_id, username)

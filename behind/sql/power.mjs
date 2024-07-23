@@ -39,7 +39,7 @@ export async function insert_mapping_wechat_power (wechat_id, power_id) {
 	)
 }
 // 查询账户表中所有账户的账户详情、最新的日统计、最新的充值记录
-export async function select_all_power_user_data_by_last_date (wechat_id, power_id) {
+export async function select_all_power_user_data_by_last_date (power_id) {
 	return $pool.query2(
 		format_sql(`
 			SELECT pu.id AS power_id, pu.balance, pu.kwh_sum, pu.remark, pu.update_date, pd.date AS day_date, pd.kwh AS day_kwh, pd.amount AS day_amount, pr.datetime AS recharge_datetime, pr.amount AS amount
@@ -54,6 +54,7 @@ export async function select_all_power_user_data_by_last_date (wechat_id, power_
 				FROM power_recharge t1 
 				INNER JOIN (SELECT power_id, MAX(datetime) AS max_datetime FROM power_recharge GROUP BY power_id) AS t2 ON t1.power_id = t2.power_id AND t1.datetime = t2.max_datetime
 			) pr ON pr.power_id = pu.id
+			${power_id ? `WHERE pu.id = '${power_id}'` : ''}
 		`)
 	)
 }

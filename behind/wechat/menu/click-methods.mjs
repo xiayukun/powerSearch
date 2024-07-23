@@ -42,7 +42,7 @@ export async function get_power_detail (data, sendObj) {
 		}
 		sendObj.content = `您近${list.length}天的电量消耗${Number(count_kwh.toFixed(2))}度，电费消耗${Number(count_amount.toFixed(3))}元。详情如下：\n` + sendObj.content
 	} else {
-		sendObj.content += '还未记录到您的电费消耗情况，可能绑定事件尚短，请明天再来看吧！'
+		sendObj.content += '还未记录到您的电费消耗情况，可能绑定时间尚短，请明天再来看吧！'
 	}
 	sendObj.type = 'end'
 	return false
