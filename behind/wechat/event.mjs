@@ -9,7 +9,7 @@ export function event_subscribe (req, res) {
 	// 发送消息
 	res.type('application/xml')
 	res.send(
-		builder.buildObject2({
+		$builder.buildObject2({
 			ToUserName: req.body.xml.fromusername[0],
 			FromUserName: req.body.xml.tousername[0],
 			CreateTime: new Date().getTime(),
@@ -57,7 +57,7 @@ export async function event_text (req, res) {
 		// 发送回复消息
 		res.type('application/xml')
 		res.send(
-			builder.buildObject2({
+			$builder.buildObject2({
 				ToUserName: req.body.xml.fromusername[0],
 				FromUserName: req.body.xml.tousername[0],
 				CreateTime: new Date().getTime(),
@@ -80,7 +80,7 @@ export function event_image (req, res) {
 	// 发送回复消息
 	res.type('application/xml')
 	res.send(
-		builder.buildObject2({
+		$builder.buildObject2({
 			ToUserName: req.body.xml.fromusername[0],
 			FromUserName: req.body.xml.tousername[0],
 			CreateTime: new Date().getTime(),

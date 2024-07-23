@@ -1,14 +1,15 @@
 import moment from 'moment'
 import xml2js from 'xml2js'
 import { select_wechat_menu } from '../sql/wechat.mjs'
+import ClearItem from './ClearItem.mjs'
 
 // 用于解析XML格式的请求和回复消息
-global.builder = new xml2js.Builder({ rootName: 'xml', headless: true })
-builder.buildObject2 = function (obj) {
+global.$builder = new xml2js.Builder({ rootName: 'xml', headless: true })
+$builder.buildObject2 = function (obj) {
 	if (obj.Content) {
 		$log(`向${obj.ToUserName}发送信息：\n`, obj.Content)
 	}
-	return builder.buildObject(...arguments)
+	return $builder.buildObject(...arguments)
 }
 global.$log = function () {
 	// eslint-disable-next-line no-console
@@ -22,8 +23,10 @@ global.$sleep = function (time) {
 	})
 }
 // 菜单首页缓存
-
 global.$menu = (await select_wechat_menu())[0]
+
+// 充值链接随机值
+global.$rechargeUrl = new ClearItem()
 
 // 整理因前端输入原因，可能要更正的sql语句
 export function format_sql (sql) {
@@ -58,16 +61,14 @@ export function timeUntilNext710 () {
 	return diff
 }
 
-// // 区别动态生成的menu的NO，省的重复
-// export async function diffMenuNO (activeMenu, menu) {
-// 	const menuNo = menu.map((i) => i.NO)
-// 	return activeMenu.map((i) => {
-// 		while (!menuNo.includes(i.NO)) {
-// 			i.NO++
-// 		}
-// 		return i
-// 	})
-// }
+// 区别动态生成的menu的NO，省的重复
+export function diffMenuNO (NO, menList) {
+	const NO_list = menList.map((i) => String(i.NO))
+	while (NO_list.includes(String(NO))) {
+		NO = Number(NO) + 1
+	}
+	return NO
+}
 
 // 使用list整理要发送的消息
 export async function createMessageByList (sendObj) {

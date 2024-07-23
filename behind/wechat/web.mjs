@@ -5,6 +5,7 @@ import { FormData } from 'node-fetch'
 import { select_wechat } from '../sql/wechat.mjs'
 import { countOneDay } from '../util/count.mjs'
 
+// 绑定电费账户
 export async function web_api_bind (req, res) {
 	await throlle(res)
 	const { wechat_id, username, password, remark } = req.body
@@ -67,4 +68,19 @@ export async function web_api_checkWechat (req, res) {
 		return
 	}
 	res.send('success')
+}
+
+// 去往充值页面
+export async function to_recharge (req, res) {
+	if (!req.headers['user-agent'].includes('MicroMessenger')) {
+		res.send('请在微信浏览器中打开')
+		return
+	}
+	const uList = req.originalUrl.replace('/', '').split('/')
+	const power_id = $rechargeUrl.get(uList[1])
+	if (uList.length === 2 && uList[0] === 'recharge' && power_id) {
+		res.redirect(`http://www.langyuewy.com/Login.aspx?userid=${power_id}`)
+	} else {
+		res.send('您的链接已过期，请重新生成')
+	}
 }

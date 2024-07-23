@@ -177,8 +177,6 @@ export function insert_wechat_send_history (sendObj) {
 				wechat_id,
 				type,
 				datetime,
-				menu,
-				menu_params,
 				content
 			)
 			VALUES
@@ -186,8 +184,6 @@ export function insert_wechat_send_history (sendObj) {
 					'${sendObj.wechat_id}',
 					'${sendObj.type}',
 					'${moment().format('yyyy-MM-DD HH:mm:ss')}',
-					'${JSON.stringify(sendObj.menu) || null}',
-					'${JSON.stringify(sendObj.menu_params) || null}',
 					'${sendObj.content || null}'
 				)
 

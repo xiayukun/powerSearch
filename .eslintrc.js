@@ -45,11 +45,12 @@ module.exports = {
 	},
 	globals: {
 		$log: true,
-		service: true,
-		builder: true,
+		$service: true,
+		$builder: true,
 		$pool: true,
 		$catch_all: true,
 		$sleep: true,
-		$menu: true
+		$menu: true,
+		$rechargeUrl: true
 	}
 }

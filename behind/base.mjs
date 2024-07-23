@@ -5,14 +5,14 @@ import xmlparser from 'express-xml-bodyparser'
 import './timeout.mjs'
 
 const PORT = 16853
-global.service = express()
+global.$service = express()
 
-service.use(express.json())
-service.use(express.urlencoded())
-service.use(xmlparser())
-service.use(express.static('front'))
+$service.use(express.json())
+$service.use(express.urlencoded())
+$service.use(xmlparser())
+$service.use(express.static('front'))
 
-service.use(async (req, res, next) => {
+$service.use(async (req, res, next) => {
 	$log(`接收到${req.method}请求`)
 	// 打印请求的全路径
 	$log(`${req.protocol}://${req.get('host')}${req.originalUrl}`)
@@ -22,7 +22,7 @@ service.use(async (req, res, next) => {
 })
 
 // 错误处理中间件
-service.use((err, req, res, next) => {
+$service.use((err, req, res, next) => {
 	$log(err.stack)
 	res.status(500).send('Something broke!')
 })
@@ -30,6 +30,6 @@ service.use((err, req, res, next) => {
 import('./collect.mjs')
 
 // 启动服务器并监听指定端口
-service.listen(PORT, () => {
+$service.listen(PORT, () => {
 	$log(`启动服务，端口是 ${PORT}`)
 })

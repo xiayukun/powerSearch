@@ -25,5 +25,8 @@
 	"[js]": {
 		"editor.defaultFormatter": "rvest.vs-code-prettier-eslint"
 	},
-	"vue.codeActions.enabled": false
+	"vue.codeActions.enabled": false,
+	"[sql]": {
+		"editor.defaultFormatter": "adpyke.vscode-sql-formatter"
+	}
 }

@@ -1,5 +1,6 @@
 import { get_powers_by_wechat_id, get_powers_day } from '../../sql/power.mjs'
 import moment from 'moment'
+import { v4 as uuidv4 } from 'uuid'
 
 // 查询电费余额
 export async function get_powers_balance (data, sendObj) {
@@ -22,6 +23,11 @@ export async function get_powers_balance (data, sendObj) {
 // 查询电费详单
 export async function get_power_detail (data, sendObj) {
 	const power_id = sendObj.menu_params.power_id
+	if (!power_id) {
+		sendObj.content += '未查找到电费账户参数，请联系管理员！'
+		sendObj.type = 'end'
+		return false
+	}
 	const limit = sendObj.menu_params.limit || 30
 	const list = (await get_powers_day({ power_id, limit }))[0]
 	if (list.length) {
@@ -42,4 +48,17 @@ export async function get_power_detail (data, sendObj) {
 	return false
 }
 // 打开电费充值页面
-export async function power_recharge (data) {}
+export async function power_recharge (data, sendObj) {
+	const power_id = sendObj.menu_params.power_id
+	if (!power_id) {
+		sendObj.content += '未查找到电费账户参数，请联系管理员！'
+		sendObj.type = 'end'
+		return false
+	}
+	const uid = uuidv4()
+	$rechargeUrl.set(uid, power_id)
+	sendObj.content += '未避免您的账户地址被滥用，已对链接进行加密，并进行登入时间限制。请点击以下链接进行跳转,5分钟内有效：\n'
+	sendObj.content += `https://mp.xiayukun.asia/recharge/${uid}\n`
+	sendObj.type = 'end'
+	return false
+}

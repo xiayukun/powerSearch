@@ -1,9 +1,9 @@
 import verify from './wechat/verify.mjs'
 import { event_subscribe, event_unsubscribe, event_text, event_image } from './wechat/event.mjs'
-import { web_api_bind, web_api_checkWechat } from './wechat/web.mjs'
+import { to_recharge, web_api_bind, web_api_checkWechat } from './wechat/web.mjs'
 
-service.post1 = function (path, fun) {
-	service.post(path, async (req, res, next) => {
+$service.post1 = function (path, fun) {
+	$service.post(path, async (req, res, next) => {
 		try {
 			await fun(req, res)
 		} catch (e) {
@@ -16,7 +16,7 @@ service.post1 = function (path, fun) {
 	})
 }
 
-service.get('/', (req, res) => {
+$service.get('/', (req, res) => {
 	if (req.query.echostr) {
 		verify(req, res)
 	} else {
@@ -24,7 +24,7 @@ service.get('/', (req, res) => {
 	}
 })
 
-service.post1('/', (req, res) => {
+$service.post1('/', (req, res) => {
 	if (req.headers['content-type'] === 'text/xml' && req.body && req.body.xml && req.body.xml.msgtype && req.body.xml.msgtype.length === 1) {
 		// 微信的xml通知
 		const xml = req.body.xml
@@ -51,6 +51,8 @@ service.post1('/', (req, res) => {
 })
 
 // 绑定账号
-service.post1('/api/bind', (req, res) => web_api_bind(req, res))
+$service.post1('/api/bind', (req, res) => web_api_bind(req, res))
 // 校验微信号是否存在
-service.post1('/api/check-wechat', (req, res) => web_api_checkWechat(req, res))
+$service.post1('/api/check-wechat', (req, res) => web_api_checkWechat(req, res))
+// 去往充值
+$service.get('/recharge/*', (req, res) => to_recharge(req, res))
