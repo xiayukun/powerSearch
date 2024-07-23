@@ -1,7 +1,10 @@
 import moment from 'moment'
-import { insert_wechat_send_history, select_children_menu_by_menu_id } from '../sql/wechat.mjs'
-import { get_powers_by_wechat_id, get_powers_day } from '../sql/power.mjs'
-import { createMessageByList } from '../util/index.mjs'
+import { createMessageByList, getMenuByParentId } from '../../util/index.mjs'
+import * as buildMethods from './build-methods.mjs'
+import * as clickMethods from './click-methods.mjs'
+
+// 所有绑定在数据库中的函数
+const methods = { ...buildMethods, ...clickMethods }
 
 // 缓存数据
 const sendAll = {} // {wechat_id:{msgid:{},now_id:'msgid'}}
@@ -50,14 +53,13 @@ export default async function repeatEventMenu (req) {
 		await sendMenu(sendObj, req.body.xml.content[0])
 		sendAll[wechat_id].now_id = msgid
 		sendObj.isDone = true
-		// 存储数据
-		insert_wechat_send_history(sendObj)
 		return sendObj
 	}
 }
 
+// 菜单查找主程序
 // before_message是为了跳过的时候直接传递加入的
-async function sendMenu (sendObj, text, before_message) {
+export async function sendMenu (sendObj, text, before_message) {
 	const { wechat_id } = sendObj
 	if (!before_message) {
 		// 获取5分钟之内上次发送的菜单
@@ -65,7 +67,7 @@ async function sendMenu (sendObj, text, before_message) {
 	}
 	if (!before_message || before_message.type === 'end') {
 		// 如果没有5分钟内的对话记录，或者上次对话已经结束，就输出首页的菜单
-		sendObj.menu.list = $mainMenu
+		sendObj.menu.list = getMenuByParentId(0)
 		sendObj.content += '请输入以下回复(5分钟有效)：\n'
 		createMessageByList(sendObj)
 	} else {
@@ -97,7 +99,7 @@ async function sendMenu (sendObj, text, before_message) {
 				if (!matchObj.click_method || (await methods[matchObj.click_method](matchObj, sendObj)) !== false) {
 					// 没有点击函数；或者有点击函数，但是点击函数返回true；继续流程
 					// 获取子项目
-					const children_menu_list = (await select_children_menu_by_menu_id(matchObj.id))[0]
+					const children_menu_list = getMenuByParentId(matchObj.id)
 					if (children_menu_list.length === 0) {
 						sendObj.content += '未找到菜单数据！请反馈管理员。'
 						sendObj.type = 'end'
@@ -117,62 +119,3 @@ async function sendMenu (sendObj, text, before_message) {
 		}
 	}
 }
-// 所有绑定在数据库中的函数
-const methods = {}
-methods.build_power = async function (menu, sendObj) {
-	const powers = (await get_powers_by_wechat_id(sendObj.wechat_id))[0]
-	if (powers.length === 0) {
-		sendObj.content += '您没有绑定电费账户，请先绑定。'
-		sendObj.type = 'end'
-		return true
-	} else if (powers.length === 1) {
-		// 只请求到一条数据，所以直接跳过本步。
-		const me_menu_row = menu.list.find((i) => i.type === 'active')
-		const message_obj = {}
-		message_obj.menu = { list: [{ ...me_menu_row, NO: 1, bind_param_value: powers[0].power_id }] }
-		message_obj.type = 'menu'
-		await sendMenu(sendObj, '1', message_obj)
-	}
-}
-// 查询电费余额
-methods.get_powers_balance = async function (data, sendObj) {
-	const powers = (await get_powers_by_wechat_id(sendObj.wechat_id))[0]
-	if (powers.length) {
-		sendObj.content += '您绑定的电费账户余额如下：\n'
-		for (let i = 0; i < powers.length; i++) {
-			const item = powers[i]
-			sendObj.content += `${item.remark || item.power_id}:
-    余额：${item.balance}
-    底度：${item.kwh_sum}
-    更新日期：${moment(item.update_date).format('yyyy-MM-DD')}\n`
-		}
-	} else {
-		sendObj.content += '未查到到您绑定的电费账户！'
-	}
-	sendObj.type = 'end'
-	return false
-}
-// 查询电费详单
-methods.get_power_detail = async function (data, sendObj) {
-	const power_id = sendObj.menu_params.power_id
-	const limit = sendObj.menu_params.limit || 30
-	const list = (await get_powers_day({ power_id, limit }))[0]
-	if (list.length) {
-		let count_kwh = 0
-		let count_amount = 0
-		sendObj.content += '日期    电量    金额\n'
-		for (let i = 0; i < list.length; i++) {
-			const item = list[i]
-			count_kwh += item.kwh
-			count_amount += item.amount
-			sendObj.content += `${moment(item.date).format('MM-DD')} ${item.kwh} ${item.amount}\n`
-		}
-		sendObj.content = `您近${list.length}天的电量消耗${count_kwh}度电费消耗情${count_amount}元。详情如下：\n` + sendObj.content
-	} else {
-		sendObj.content += '还未记录到您的电费消耗情况，可能绑定事件尚短，请明天再来看吧！'
-	}
-	sendObj.type = 'end'
-	return false
-}
-// 打开电费充值页面
-methods.power_recharge = async function (data) {}

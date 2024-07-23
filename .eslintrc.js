@@ -50,6 +50,6 @@ module.exports = {
 		$pool: true,
 		$catch_all: true,
 		$sleep: true,
-		$mainMenu: true
+		$menu: true
 	}
 }

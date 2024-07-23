@@ -142,21 +142,32 @@ export function delete_power_ids (power_id_list) {
 // 	)
 // }
 
-// 根据menu_id获取子菜单列表
-export function select_children_menu_by_menu_id (menu_id) {
+// 获取所有menu
+export function select_wechat_menu (menu_id) {
 	return $pool.query2(
 		format_sql(`
 			SELECT
 				*
 			FROM
 				wechat_menu
-			WHERE
-				parent_id = ${menu_id}
-			ORDER BY
-				sort
 			`)
 	)
 }
+// // 根据menu_id获取子菜单列表
+// export function select_children_menu_by_menu_id (menu_id) {
+// 	return $pool.query2(
+// 		format_sql(`
+// 			SELECT
+// 				*
+// 			FROM
+// 				wechat_menu
+// 			WHERE
+// 				parent_id = ${menu_id}
+// 			ORDER BY
+// 				sort
+// 			`)
+// 	)
+// }
 
 // 增加微信发送记录
 export function insert_wechat_send_history (sendObj) {

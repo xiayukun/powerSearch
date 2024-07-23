@@ -1,5 +1,5 @@
-import { delete_wechat, insert_wechat, insert_wechat_event, delete_mapping_by_wechat, select_powerCount_by_wechat, delete_power_ids } from '../sql/wechat.mjs'
-import getMenuBack from './menu.mjs'
+import { delete_wechat, insert_wechat, insert_wechat_event, delete_mapping_by_wechat, select_powerCount_by_wechat, delete_power_ids, insert_wechat_send_history } from '../sql/wechat.mjs'
+import getMenuBack from './menu/index.mjs'
 
 // 关注
 export function event_subscribe (req, res) {
@@ -65,6 +65,8 @@ export async function event_text (req, res) {
 				Content: sendObj.content
 			})
 		)
+		// 存储数据
+		insert_wechat_send_history(sendObj)
 	} catch (error) {
 		$log(error)
 		res.send('error')

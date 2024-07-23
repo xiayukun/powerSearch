@@ -1,8 +1,6 @@
 import moment from 'moment'
 import xml2js from 'xml2js'
-import axios from 'axios'
-import cheerio from 'cheerio'
-import { select_children_menu_by_menu_id } from '../sql/wechat.mjs'
+import { select_wechat_menu } from '../sql/wechat.mjs'
 
 // 用于解析XML格式的请求和回复消息
 global.builder = new xml2js.Builder({ rootName: 'xml', headless: true })
@@ -24,7 +22,8 @@ global.$sleep = function (time) {
 	})
 }
 // 菜单首页缓存
-global.$mainMenu = (await select_children_menu_by_menu_id(0))[0]
+
+global.$menu = (await select_wechat_menu())[0]
 
 // 整理因前端输入原因，可能要更正的sql语句
 export function format_sql (sql) {
@@ -42,65 +41,6 @@ export async function throlle (res) {
 	beforeTime = new Date().getTime()
 }
 
-// 获取物业电费信息
-export async function getPowerInfo (power_id) {
-	return axios
-		.get('http://www.langyuewy.com/Login.aspx?userid=' + power_id, {
-			withCredentials: true,
-			maxRedirects: 0, // 不自动重定向
-			headers: {
-				'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
-			}
-		})
-		.catch(async (error) => {
-			if (error.response.headers['set-cookie'] && error.response.headers['set-cookie'][0] && error.response.headers['set-cookie'][0].includes('ASP.NET_SessionId')) {
-				const str = error.response.headers['set-cookie'][0]
-				if (str.split(';').length > 1 && str.split(';')[0].split('=').length > 1) {
-					const key = str.split(';')[0].split('=')[1]
-					const response = await axios.get('http://www.langyuewy.com/Pay_Info.aspx?code=10000&state=STATE', {
-						withCredentials: true, // 设置为true以发送cookie
-						headers: {
-							Cookie: `ASP.NET_SessionId=${key}`
-						}
-					})
-					// 请求成功时执行的代码
-					const $ = cheerio.load(response.data)
-					const name = $('#lbusername').text()
-					const balance = Number($('#lbPRmb').text())
-					const kwh = Number($('#lbusermeter').text())
-					const payNum = $('#GridView1 tr').length - 1
-					const payList = []
-					for (let i = 0; i < payNum; i++) {
-						const tdList = $('#GridView1 tr')
-							.eq(i + 1)
-							.find('td')
-						payList.push({
-							datetime: tdList
-								.eq(1)
-								.text()
-								.split(' ')
-								.map((item, index) =>
-									item
-										.split(index === 0 ? '/' : ':')
-										.map((i) => (i.length === 1 ? `0${i}` : i))
-										.join(index === 0 ? '-' : ':')
-								)
-								.join(' '),
-							amount: Number(tdList.eq(2).text()),
-							type: tdList.eq(3).text()
-						})
-					}
-					return {
-						name,
-						balance,
-						kwh,
-						payList
-					}
-				}
-			}
-			return undefined
-		})
-}
 // 查看理下次7:10还有多久
 export function timeUntilNext710 () {
 	const now = moment()
@@ -128,6 +68,7 @@ export function timeUntilNext710 () {
 // 		return i
 // 	})
 // }
+
 // 使用list整理要发送的消息
 export async function createMessageByList (sendObj) {
 	sendObj.menu.list
@@ -139,4 +80,9 @@ export async function createMessageByList (sendObj) {
 	if (textObj) {
 		sendObj.content += `${textObj.title}\n`
 	}
+}
+
+// 根据parent_id获取菜单列表
+export function getMenuByParentId (parent_id) {
+	return global.$menu.filter((i) => String(i.parent_id) === String(parent_id))
 }
