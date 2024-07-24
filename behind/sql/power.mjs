@@ -1,17 +1,12 @@
 import { format_sql } from '../util/index.mjs'
 
-// 根据电费账户查询绑定微信用户
-export async function select_wechat_by_power (power_id) {
+// 查看电费账户和微信账户绑定情况
+export async function select_mappding_by_power_id_and_wechat_id ({ power_id, wechat_id }) {
 	return $pool.query2(
 		format_sql(`
-			SELECT
-				wechat_user.id
-			FROM
-				wechat_user
-			INNER JOIN mapping_wechat_power ON wechat_user.id = mapping_wechat_power.wechat_id
-			INNER JOIN power_user ON power_user.id = mapping_wechat_power.power_id
-			WHERE
-				power_user.id = '${power_id}'
+			select wechat_id,power_id,BN as power_BN from mapping_wechat_power 
+			LEFT JOIN power_user on power_user.id=mapping_wechat_power.power_id 
+			where power_id='${power_id}' or wechat_id='${wechat_id}'
 		`)
 	)
 }
@@ -59,34 +54,6 @@ export async function select_all_power_user_data_by_last_date (power_id) {
 	)
 }
 
-// 查询电费最近的数据
-// export async function select_near_power (power_id) {
-// 	return $pool.query2(
-// 		format_sql(`
-// 			SELECT
-// 				id as power_id,
-// 				balance,
-// 				kwh_sum,
-// 				remark,
-// 				update_date,
-// 				power_day.date AS day_date,
-// 				kwh as day_kwh,
-// 				power_day.amount AS day_amount,
-// 				power_recharge.datetime AS recharge_datetime,
-// 				power_recharge.amount AS amount
-// 			FROM
-// 				power_user
-// 			LEFT JOIN power_day ON power_user.id = power_day.power_id
-// 			LEFT JOIN power_recharge ON power_recharge.power_id = power_user.id
-// 			WHERE
-// 				power_user.id = '${power_id}'
-// 			ORDER BY
-// 				power_day.date DESC,
-// 				power_recharge.datetime DESC
-// 			LIMIT 1
-// 			`)
-// 	)
-// }
 // 更新用户表的电费
 export async function update_power_sum (obj) {
 	return $pool.query2(
@@ -120,17 +87,6 @@ export async function insert_power_day (data) {
 	`)
 	)
 }
-// 查询全部电费账户
-// export async function select_power_id_all () {
-// 	return $pool.query2(
-// 		format_sql(`
-// 			SELECT
-// 				id
-// 			FROM
-// 				power_user
-// 		`)
-// 	)
-// }
 // 根据微信id，查询绑定的所有电费账户
 export async function get_powers_by_wechat_id (wechat_id) {
 	return $pool.query2(

@@ -4,7 +4,7 @@ import cheerio from 'cheerio'
 import { insert_power_day, insert_power_recharge, update_power_sum } from '../sql/power.mjs'
 
 // 计算一天的数据并填入
-export async function countOneDay ({ power_id, update_date, recharge_datetime, day_date, kwh_sum, balance }, today) {
+export async function countOneDay ({ power_id, update_date, recharge_datetime, day_date, kwh_sum, balance }, today, isTimeout) {
 	if (moment(update_date).format('yyyy-MM-DD') !== today) {
 		$log('###开始记录电费数据：', power_id)
 		const data = await getPowerInfo(power_id)
@@ -38,7 +38,7 @@ export async function countOneDay ({ power_id, update_date, recharge_datetime, d
 			}
 		}
 		$log('###结束记录电费数据：', power_id)
-		await $sleep(3000)
+		isTimeout && (await $sleep(3000))
 	} else {
 		$log(power_id, '电费信息已经是最新了！')
 	}

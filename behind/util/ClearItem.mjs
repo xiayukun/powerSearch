@@ -1,9 +1,7 @@
-import moment from 'moment'
-
-// 会自动清理数据的对象
+// 会自动清理数据的对象,通过构造函数传入过期时间创建
 export default class ClearItem {
-	constructor (seconds = 300) {
-		this.seconds = seconds
+	constructor (clear_time = 300) {
+		this.clear_time = clear_time
 		this.data = {}
 	}
 
@@ -17,13 +15,13 @@ export default class ClearItem {
 
 	set (key, value) {
 		this.clearObject()
-		this.data[key] = { datetime: moment(), value }
+		this.data[key] = { time: new Date().getTime(), value }
 	}
 
 	clearObject () {
-		const now = moment()
+		const now_time = new Date().getTime()
 		for (const key in this.data) {
-			if (this.data[key] && this.data[key] instanceof Object && this.data[key].datetime && now.diff(this.data[key].datetime, 'seconds') > this.seconds) {
+			if (this.data[key] && this.data[key] instanceof Object && this.data[key].datetime && now_time - this.data[key].datetime > this.clear_time) {
 				delete this.data[key]
 			}
 		}

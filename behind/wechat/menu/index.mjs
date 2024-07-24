@@ -1,46 +1,29 @@
-import moment from 'moment'
 import { createMessageByList, getMenuByParentId } from '../../util/index.mjs'
 import * as buildMethods from './build-methods.mjs'
 import * as clickMethods from './click-methods.mjs'
+import ClearSendMenu from '../../util/ClearSendMenu.mjs'
 
 // 所有绑定在数据库中的函数
 const methods = { ...buildMethods, ...clickMethods }
-
 // 缓存数据
-const sendAll = {} // {wechat_id:{msgid:{},now_id:'msgid'}}
-// 每过10s，清理一下过期数据
-setInterval(() => {
-	const now = moment()
-	for (const wechat_id in sendAll) {
-		for (const msgid in sendAll[wechat_id]) {
-			const sendObj = sendAll[wechat_id][msgid]
-			if (sendObj.isDone) {
-				const seconds = now.diff(sendObj.datetime, 'seconds')
-				if (seconds > 300 || (seconds > 20 && sendAll[wechat_id].now_id !== msgid)) {
-					// 大于5分钟直接清理，或者大于20秒的，看看是不是最新的，不是最新的也清理
-					delete sendAll[wechat_id][msgid]
-				}
-			}
-		}
-	}
-}, 10000)
+const sendAll = new ClearSendMenu()
 // 检测是否是重复发送消息，如果是的话，直接吧上次的结果返回出去
 export default async function repeatEventMenu (req) {
 	const wechat_id = req.body.xml.fromusername[0]
-	sendAll[wechat_id] || (sendAll[wechat_id] = {})
 	const msgid = req.body.xml.msgid[0]
-	if (sendAll[wechat_id][msgid]) {
+	if (sendAll.get(wechat_id, msgid)) {
+		const current_sendObj = sendAll.get(wechat_id, msgid)
 		$log('+++检测到消息重复发送')
-		if (sendAll[wechat_id][msgid].isDone) {
+		if (current_sendObj.isDone) {
 			$log('+++已经把上次结果发过去了')
-			sendAll[wechat_id].now_id = msgid
-			return sendAll[wechat_id][msgid]
+			sendAll.setBeforeMsg(wechat_id, msgid)
+			return current_sendObj
 		} else {
 			await $sleep(3000) // 等3s
-			if (sendAll[wechat_id][msgid].isDone) {
+			if (current_sendObj.isDone) {
 				$log('+++已经把上次结果发过去了')
-				sendAll[wechat_id].now_id = msgid
-				return sendAll[wechat_id][msgid]
+				sendAll.setBeforeMsg(wechat_id, msgid)
+				return current_sendObj
 			} else {
 				$log('---等了一会儿还是没生成结果，就算了')
 				return false
@@ -48,15 +31,15 @@ export default async function repeatEventMenu (req) {
 		}
 	} else {
 		// 创建本次发送的对象
-		const sendObj = { wechat_id: req.body.xml.fromusername[0], type: 'menu', menu: { list: [] }, menu_params: {}, content: '', datetime: moment() }
-		sendAll[wechat_id][msgid] = sendObj
+		const sendObj = { wechat_id: req.body.xml.fromusername[0], type: 'menu', menu: { list: [] }, menu_params: {}, content: '' }
+		sendAll.set(wechat_id, msgid, sendObj)
 		await sendMenu(sendObj, req.body.xml.content[0])
-		sendAll[wechat_id].now_id = msgid
 		if (sendObj.menu.list.length === 0 || sendObj.menu.list[0].parent_id !== 0) {
 			sendObj.content += '\n----------------------\n'
 			sendObj.content += '输入0返回主菜单'
 		}
 		sendObj.isDone = true
+		sendAll.setBeforeMsg(wechat_id, msgid)
 		return sendObj
 	}
 }
@@ -73,7 +56,7 @@ export async function sendMenu (sendObj, text, before_message) {
 	}
 	if (!before_message) {
 		// 获取5分钟之内上次发送的菜单
-		before_message = sendAll[sendObj.wechat_id] && sendAll[sendObj.wechat_id].now_id ? sendAll[sendObj.wechat_id][sendAll[sendObj.wechat_id].now_id] : undefined
+		before_message = sendAll.getBeforeMsg(sendObj.wechat_id)
 	}
 	if (!before_message || before_message.type === 'end') {
 		// 如果没有5分钟内的对话记录，或者上次对话已经结束，就按照首页的菜单进行选择

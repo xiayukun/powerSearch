@@ -1,13 +1,13 @@
-(node:13148) Warning: Accessing non-existent property 'padLevels' of module exports inside circular dependency
+(node:1460) Warning: Accessing non-existent property 'padLevels' of module exports inside circular dependency
 (Use `node --trace-warnings ...` to show where the warning was created)
-2024-07-24 01:39:13 执行sql 
+2024-07-24 02:01:09 执行sql 
 			SELECT
 				*
 			FROM
 				wechat_menu
 			
-2024-07-24 01:39:14 ------开始定时任务执行---------
-2024-07-24 01:39:14 执行sql 
+2024-07-24 02:01:11 ------开始定时任务执行---------
+2024-07-24 02:01:11 执行sql 
 			SELECT pu.id AS power_id, pu.balance, pu.kwh_sum, pu.remark, pu.update_date, pd.date AS day_date, pd.kwh AS day_kwh, pd.amount AS day_amount, pr.datetime AS recharge_datetime, pr.amount AS amount
 			FROM power_user pu
 			LEFT JOIN (
@@ -20,9 +20,721 @@
 				FROM power_recharge t1 
 				INNER JOIN (SELECT power_id, MAX(datetime) AS max_datetime FROM power_recharge GROUP BY power_id) AS t2 ON t1.power_id = t2.power_id AND t1.datetime = t2.max_datetime
 			) pr ON pr.power_id = pu.id
+			
 		
-Tue, 23 Jul 2024 17:39:14 GMT body-parser deprecated undefined extended: provide extended option at file:/root/powerSearch/behind/base.mjs:11:22
-2024-07-24 01:39:14 启动服务，端口是 16853
-2024-07-24 01:39:14 6010921 电费信息已经是最新了！
-2024-07-24 01:39:14 ------结束定时任务执行---------
+Tue, 23 Jul 2024 18:01:11 GMT body-parser deprecated undefined extended: provide extended option at file:/root/powerSearch/behind/base.mjs:11:22
+2024-07-24 02:01:11 启动服务，端口是 16853
+2024-07-24 02:01:11 6010921 电费信息已经是最新了！
+2024-07-24 02:01:11 50B0723 电费信息已经是最新了！
+2024-07-24 02:01:11 ------结束定时任务执行---------
+2024-07-24 02:03:29 接收到POST请求
+2024-07-24 02:03:29 http://weixin.xiayukun.asia:444/?signature=dffa53d5f2b87cced208f9620010c0c6888a080c&timestamp=1721757809&nonce=2122147158&openid=oTYqx6Q2Y-HHiph03Y-4cXinC3FI
+2024-07-24 02:03:29 Query:{"signature":"dffa53d5f2b87cced208f9620010c0c6888a080c","timestamp":"1721757809","nonce":"2122147158","openid":"oTYqx6Q2Y-HHiph03Y-4cXinC3FI"}
+2024-07-24 02:03:29 Body:{"xml":{"tousername":["gh_df4e42db796c"],"fromusername":["oTYqx6Q2Y-HHiph03Y-4cXinC3FI"],"createtime":["1721757808"],"msgtype":["text"],"content":["1"],"msgid":["24649643394808129"]}}
+2024-07-24 02:03:29 来文字消息了：1
+2024-07-24 02:03:29 执行sql 
+				INSERT INTO wechat_event (
+					wechat_id,
+					event_id,
+					datetime,
+					msgid,
+					content
+				)
+				VALUES
+					(
+						'oTYqx6Q2Y-HHiph03Y-4cXinC3FI',
+						'text',
+						'2024-07-24 02:03:29',
+						'24649643394808129',
+						'1'
+					)
+		
+2024-07-24 02:03:29 执行sql 
+			SELECT
+				power_user.id AS power_id,
+				balance,
+				kwh_sum,
+				update_date,
+				remark
+			FROM
+				power_user
+			INNER JOIN mapping_wechat_power ON power_user.id = mapping_wechat_power.power_id
+			INNER JOIN wechat_user ON wechat_user.id = mapping_wechat_power.wechat_id
+			WHERE
+				wechat_user.id = 'oTYqx6Q2Y-HHiph03Y-4cXinC3FI'
+		
+2024-07-24 02:03:29 向oTYqx6Q2Y-HHiph03Y-4cXinC3FI发送信息：
+ 您绑定的电费账户余额如下：
+50B0723:
+    余额：41.75
+    底度：2097.55
+    更新日期：2024-07-23
+6010921:
+    余额：32.0075
+    底度：2707.01
+    更新日期：2024-07-23
+
+----------------------
+输入0返回主菜单
+2024-07-24 02:03:30 执行sql 
+			INSERT INTO wechat_send_history (
+				wechat_id,
+				type,
+				datetime,
+				content
+			)
+			VALUES
+				(
+					'oTYqx6Q2Y-HHiph03Y-4cXinC3FI',
+					'end',
+					'2024-07-24 02:03:30',
+					'您绑定的电费账户余额如下：
+50B0723:
+    余额：41.75
+    底度：2097.55
+    更新日期：2024-07-23
+6010921:
+    余额：32.0075
+    底度：2707.01
+    更新日期：2024-07-23
+
+----------------------
+输入0返回主菜单'
+				)
+
+			
+2024-07-24 02:03:35 接收到POST请求
+2024-07-24 02:03:35 http://weixin.xiayukun.asia:444/?signature=cf7100c43407bd57d3b20fadc74b2471a0cab387&timestamp=1721757814&nonce=860558979&openid=oTYqx6Q2Y-HHiph03Y-4cXinC3FI
+2024-07-24 02:03:35 Query:{"signature":"cf7100c43407bd57d3b20fadc74b2471a0cab387","timestamp":"1721757814","nonce":"860558979","openid":"oTYqx6Q2Y-HHiph03Y-4cXinC3FI"}
+2024-07-24 02:03:35 Body:{"xml":{"tousername":["gh_df4e42db796c"],"fromusername":["oTYqx6Q2Y-HHiph03Y-4cXinC3FI"],"createtime":["1721757814"],"msgtype":["text"],"content":["0"],"msgid":["24649642719881826"]}}
+2024-07-24 02:03:35 来文字消息了：0
+2024-07-24 02:03:35 执行sql 
+				INSERT INTO wechat_event (
+					wechat_id,
+					event_id,
+					datetime,
+					msgid,
+					content
+				)
+				VALUES
+					(
+						'oTYqx6Q2Y-HHiph03Y-4cXinC3FI',
+						'text',
+						'2024-07-24 02:03:35',
+						'24649642719881826',
+						'0'
+					)
+		
+2024-07-24 02:03:35 向oTYqx6Q2Y-HHiph03Y-4cXinC3FI发送信息：
+ 请输入以下回复：
+1:查询电费余额
+2:查询电费详单
+3:电费充值(跳转物业地址)
+4:管理电费账户
+5:绑定账户(可绑定多个账户)
+
+2024-07-24 02:03:35 执行sql 
+			INSERT INTO wechat_send_history (
+				wechat_id,
+				type,
+				datetime,
+				content
+			)
+			VALUES
+				(
+					'oTYqx6Q2Y-HHiph03Y-4cXinC3FI',
+					'menu',
+					'2024-07-24 02:03:35',
+					'请输入以下回复：
+1:查询电费余额
+2:查询电费详单
+3:电费充值(跳转物业地址)
+4:管理电费账户
+5:绑定账户(可绑定多个账户)
+'
+				)
+
+			
+2024-07-24 02:03:45 接收到POST请求
+2024-07-24 02:03:45 http://weixin.xiayukun.asia:444/?signature=adddd1fee93e6e8b614148e4cd28a195b11274ae&timestamp=1721757825&nonce=898911140&openid=oTYqx6Q2Y-HHiph03Y-4cXinC3FI
+2024-07-24 02:03:45 Query:{"signature":"adddd1fee93e6e8b614148e4cd28a195b11274ae","timestamp":"1721757825","nonce":"898911140","openid":"oTYqx6Q2Y-HHiph03Y-4cXinC3FI"}
+2024-07-24 02:03:45 Body:{"xml":{"tousername":["gh_df4e42db796c"],"fromusername":["oTYqx6Q2Y-HHiph03Y-4cXinC3FI"],"createtime":["1721757824"],"msgtype":["text"],"content":["1"],"msgid":["24649643528901088"]}}
+2024-07-24 02:03:45 来文字消息了：1
+2024-07-24 02:03:45 执行sql 
+				INSERT INTO wechat_event (
+					wechat_id,
+					event_id,
+					datetime,
+					msgid,
+					content
+				)
+				VALUES
+					(
+						'oTYqx6Q2Y-HHiph03Y-4cXinC3FI',
+						'text',
+						'2024-07-24 02:03:45',
+						'24649643528901088',
+						'1'
+					)
+		
+2024-07-24 02:03:45 执行sql 
+			SELECT
+				power_user.id AS power_id,
+				balance,
+				kwh_sum,
+				update_date,
+				remark
+			FROM
+				power_user
+			INNER JOIN mapping_wechat_power ON power_user.id = mapping_wechat_power.power_id
+			INNER JOIN wechat_user ON wechat_user.id = mapping_wechat_power.wechat_id
+			WHERE
+				wechat_user.id = 'oTYqx6Q2Y-HHiph03Y-4cXinC3FI'
+		
+2024-07-24 02:03:45 向oTYqx6Q2Y-HHiph03Y-4cXinC3FI发送信息：
+ 您绑定的电费账户余额如下：
+50B0723:
+    余额：41.75
+    底度：2097.55
+    更新日期：2024-07-23
+6010921:
+    余额：32.0075
+    底度：2707.01
+    更新日期：2024-07-23
+
+----------------------
+输入0返回主菜单
+2024-07-24 02:03:45 执行sql 
+			INSERT INTO wechat_send_history (
+				wechat_id,
+				type,
+				datetime,
+				content
+			)
+			VALUES
+				(
+					'oTYqx6Q2Y-HHiph03Y-4cXinC3FI',
+					'end',
+					'2024-07-24 02:03:45',
+					'您绑定的电费账户余额如下：
+50B0723:
+    余额：41.75
+    底度：2097.55
+    更新日期：2024-07-23
+6010921:
+    余额：32.0075
+    底度：2707.01
+    更新日期：2024-07-23
+
+----------------------
+输入0返回主菜单'
+				)
+
+			
+2024-07-24 02:03:51 接收到POST请求
+2024-07-24 02:03:51 http://weixin.xiayukun.asia:444/?signature=b34afc1abd6f6eddbe8e26081b8f0f721c44b13a&timestamp=1721757831&nonce=1075089924&openid=oTYqx6Q2Y-HHiph03Y-4cXinC3FI
+2024-07-24 02:03:51 Query:{"signature":"b34afc1abd6f6eddbe8e26081b8f0f721c44b13a","timestamp":"1721757831","nonce":"1075089924","openid":"oTYqx6Q2Y-HHiph03Y-4cXinC3FI"}
+2024-07-24 02:03:51 Body:{"xml":{"tousername":["gh_df4e42db796c"],"fromusername":["oTYqx6Q2Y-HHiph03Y-4cXinC3FI"],"createtime":["1721757830"],"msgtype":["text"],"content":["2"],"msgid":["24649643438241272"]}}
+2024-07-24 02:03:51 来文字消息了：2
+2024-07-24 02:03:51 执行sql 
+				INSERT INTO wechat_event (
+					wechat_id,
+					event_id,
+					datetime,
+					msgid,
+					content
+				)
+				VALUES
+					(
+						'oTYqx6Q2Y-HHiph03Y-4cXinC3FI',
+						'text',
+						'2024-07-24 02:03:51',
+						'24649643438241272',
+						'2'
+					)
+		
+2024-07-24 02:03:51 执行sql 
+			SELECT
+				power_user.id AS power_id,
+				balance,
+				kwh_sum,
+				update_date,
+				remark
+			FROM
+				power_user
+			INNER JOIN mapping_wechat_power ON power_user.id = mapping_wechat_power.power_id
+			INNER JOIN wechat_user ON wechat_user.id = mapping_wechat_power.wechat_id
+			WHERE
+				wechat_user.id = 'oTYqx6Q2Y-HHiph03Y-4cXinC3FI'
+		
+2024-07-24 02:03:51 向oTYqx6Q2Y-HHiph03Y-4cXinC3FI发送信息：
+ 请选择电费账户(5分钟有效)：
+1:50B0723
+2:6010921
+
+----------------------
+输入0返回主菜单
+2024-07-24 02:03:51 执行sql 
+			INSERT INTO wechat_send_history (
+				wechat_id,
+				type,
+				datetime,
+				content
+			)
+			VALUES
+				(
+					'oTYqx6Q2Y-HHiph03Y-4cXinC3FI',
+					'menu',
+					'2024-07-24 02:03:51',
+					'请选择电费账户(5分钟有效)：
+1:50B0723
+2:6010921
+
+----------------------
+输入0返回主菜单'
+				)
+
+			
+2024-07-24 02:03:58 接收到POST请求
+2024-07-24 02:03:58 http://weixin.xiayukun.asia:444/?signature=4426879585c0b31923a7e261cc14c0bdae26cc78&timestamp=1721757837&nonce=1090192989&openid=oTYqx6Q2Y-HHiph03Y-4cXinC3FI
+2024-07-24 02:03:58 Query:{"signature":"4426879585c0b31923a7e261cc14c0bdae26cc78","timestamp":"1721757837","nonce":"1090192989","openid":"oTYqx6Q2Y-HHiph03Y-4cXinC3FI"}
+2024-07-24 02:03:58 Body:{"xml":{"tousername":["gh_df4e42db796c"],"fromusername":["oTYqx6Q2Y-HHiph03Y-4cXinC3FI"],"createtime":["1721757837"],"msgtype":["text"],"content":["2"],"msgid":["24649645136841168"]}}
+2024-07-24 02:03:58 来文字消息了：2
+2024-07-24 02:03:58 执行sql 
+				INSERT INTO wechat_event (
+					wechat_id,
+					event_id,
+					datetime,
+					msgid,
+					content
+				)
+				VALUES
+					(
+						'oTYqx6Q2Y-HHiph03Y-4cXinC3FI',
+						'text',
+						'2024-07-24 02:03:58',
+						'24649645136841168',
+						'2'
+					)
+		
+2024-07-24 02:03:58 执行sql 
+			SELECT
+				date,
+				kwh,
+				amount
+			FROM
+				power_day
+			WHERE
+				power_id = '6010921'
+			ORDER BY
+				date DESC
+			LIMIT 30
+		
+2024-07-24 02:03:58 向oTYqx6Q2Y-HHiph03Y-4cXinC3FI发送信息：
+ 您近3天的电量消耗60.3度，电费消耗45.23元。详情如下：
+日期    电量    金额
+07-22 17.09 12.82
+07-21 22.27 16.7
+07-20 20.94 15.71
+
+----------------------
+输入0返回主菜单
+2024-07-24 02:03:58 执行sql 
+			INSERT INTO wechat_send_history (
+				wechat_id,
+				type,
+				datetime,
+				content
+			)
+			VALUES
+				(
+					'oTYqx6Q2Y-HHiph03Y-4cXinC3FI',
+					'end',
+					'2024-07-24 02:03:58',
+					'您近3天的电量消耗60.3度，电费消耗45.23元。详情如下：
+日期    电量    金额
+07-22 17.09 12.82
+07-21 22.27 16.7
+07-20 20.94 15.71
+
+----------------------
+输入0返回主菜单'
+				)
+
+			
+2024-07-24 02:04:06 接收到POST请求
+2024-07-24 02:04:06 http://weixin.xiayukun.asia:444/?signature=bb756a2f24288636266bd74aace41d053d8e6d29&timestamp=1721757846&nonce=280375307&openid=oTYqx6Q2Y-HHiph03Y-4cXinC3FI
+2024-07-24 02:04:06 Query:{"signature":"bb756a2f24288636266bd74aace41d053d8e6d29","timestamp":"1721757846","nonce":"280375307","openid":"oTYqx6Q2Y-HHiph03Y-4cXinC3FI"}
+2024-07-24 02:04:06 Body:{"xml":{"tousername":["gh_df4e42db796c"],"fromusername":["oTYqx6Q2Y-HHiph03Y-4cXinC3FI"],"createtime":["1721757845"],"msgtype":["text"],"content":["3"],"msgid":["24649643985575729"]}}
+2024-07-24 02:04:06 来文字消息了：3
+2024-07-24 02:04:06 执行sql 
+				INSERT INTO wechat_event (
+					wechat_id,
+					event_id,
+					datetime,
+					msgid,
+					content
+				)
+				VALUES
+					(
+						'oTYqx6Q2Y-HHiph03Y-4cXinC3FI',
+						'text',
+						'2024-07-24 02:04:06',
+						'24649643985575729',
+						'3'
+					)
+		
+2024-07-24 02:04:06 执行sql 
+			SELECT
+				power_user.id AS power_id,
+				balance,
+				kwh_sum,
+				update_date,
+				remark
+			FROM
+				power_user
+			INNER JOIN mapping_wechat_power ON power_user.id = mapping_wechat_power.power_id
+			INNER JOIN wechat_user ON wechat_user.id = mapping_wechat_power.wechat_id
+			WHERE
+				wechat_user.id = 'oTYqx6Q2Y-HHiph03Y-4cXinC3FI'
+		
+2024-07-24 02:04:06 向oTYqx6Q2Y-HHiph03Y-4cXinC3FI发送信息：
+ 请选择电费账户(5分钟有效)：
+1:50B0723
+2:6010921
+
+----------------------
+输入0返回主菜单
+2024-07-24 02:04:06 执行sql 
+			INSERT INTO wechat_send_history (
+				wechat_id,
+				type,
+				datetime,
+				content
+			)
+			VALUES
+				(
+					'oTYqx6Q2Y-HHiph03Y-4cXinC3FI',
+					'menu',
+					'2024-07-24 02:04:06',
+					'请选择电费账户(5分钟有效)：
+1:50B0723
+2:6010921
+
+----------------------
+输入0返回主菜单'
+				)
+
+			
+2024-07-24 02:04:12 接收到POST请求
+2024-07-24 02:04:12 http://weixin.xiayukun.asia:444/?signature=914242e8c6dc16ffd50ebdc8af177a6c35244fd0&timestamp=1721757852&nonce=263606833&openid=oTYqx6Q2Y-HHiph03Y-4cXinC3FI
+2024-07-24 02:04:12 Query:{"signature":"914242e8c6dc16ffd50ebdc8af177a6c35244fd0","timestamp":"1721757852","nonce":"263606833","openid":"oTYqx6Q2Y-HHiph03Y-4cXinC3FI"}
+2024-07-24 02:04:12 Body:{"xml":{"tousername":["gh_df4e42db796c"],"fromusername":["oTYqx6Q2Y-HHiph03Y-4cXinC3FI"],"createtime":["1721757851"],"msgtype":["text"],"content":["1"],"msgid":["24649642902041771"]}}
+2024-07-24 02:04:12 来文字消息了：1
+2024-07-24 02:04:12 执行sql 
+				INSERT INTO wechat_event (
+					wechat_id,
+					event_id,
+					datetime,
+					msgid,
+					content
+				)
+				VALUES
+					(
+						'oTYqx6Q2Y-HHiph03Y-4cXinC3FI',
+						'text',
+						'2024-07-24 02:04:12',
+						'24649642902041771',
+						'1'
+					)
+		
+2024-07-24 02:04:12 向oTYqx6Q2Y-HHiph03Y-4cXinC3FI发送信息：
+ 未避免您的账户地址被滥用，已对链接进行加密，并进行登入时间限制。请点击以下链接进行跳转,5分钟内有效：
+https://mp.xiayukun.asia/recharge/d250f19b-4493-4c4d-99d2-6695dc3c3440
+
+----------------------
+输入0返回主菜单
+2024-07-24 02:04:12 执行sql 
+			INSERT INTO wechat_send_history (
+				wechat_id,
+				type,
+				datetime,
+				content
+			)
+			VALUES
+				(
+					'oTYqx6Q2Y-HHiph03Y-4cXinC3FI',
+					'end',
+					'2024-07-24 02:04:12',
+					'未避免您的账户地址被滥用，已对链接进行加密，并进行登入时间限制。请点击以下链接进行跳转,5分钟内有效：
+https://mp.xiayukun.asia/recharge/d250f19b-4493-4c4d-99d2-6695dc3c3440
+
+----------------------
+输入0返回主菜单'
+				)
+
+			
+2024-07-24 02:04:35 接收到GET请求
+2024-07-24 02:04:35 http://weixin.xiayukun.asia:444/recharge/d250f19b-4493-4c4d-99d2-6695dc3c3440
+2024-07-24 02:04:35 Query:{}
+2024-07-24 02:04:35 Body:{}
+2024-07-24 02:05:26 接收到POST请求
+2024-07-24 02:05:26 http://weixin.xiayukun.asia:444/?signature=cb29f2b3d45471822a1c6aff11f8dfd3075257dc&timestamp=1721757926&nonce=228882710&openid=oTYqx6Q2Y-HHiph03Y-4cXinC3FI
+2024-07-24 02:05:26 Query:{"signature":"cb29f2b3d45471822a1c6aff11f8dfd3075257dc","timestamp":"1721757926","nonce":"228882710","openid":"oTYqx6Q2Y-HHiph03Y-4cXinC3FI"}
+2024-07-24 02:05:26 Body:{"xml":{"tousername":["gh_df4e42db796c"],"fromusername":["oTYqx6Q2Y-HHiph03Y-4cXinC3FI"],"createtime":["1721757925"],"msgtype":["text"],"content":["3"],"msgid":["24649648290211770"]}}
+2024-07-24 02:05:26 来文字消息了：3
+2024-07-24 02:05:26 执行sql 
+				INSERT INTO wechat_event (
+					wechat_id,
+					event_id,
+					datetime,
+					msgid,
+					content
+				)
+				VALUES
+					(
+						'oTYqx6Q2Y-HHiph03Y-4cXinC3FI',
+						'text',
+						'2024-07-24 02:05:26',
+						'24649648290211770',
+						'3'
+					)
+		
+2024-07-24 02:05:26 执行sql 
+			SELECT
+				power_user.id AS power_id,
+				balance,
+				kwh_sum,
+				update_date,
+				remark
+			FROM
+				power_user
+			INNER JOIN mapping_wechat_power ON power_user.id = mapping_wechat_power.power_id
+			INNER JOIN wechat_user ON wechat_user.id = mapping_wechat_power.wechat_id
+			WHERE
+				wechat_user.id = 'oTYqx6Q2Y-HHiph03Y-4cXinC3FI'
+		
+2024-07-24 02:05:26 向oTYqx6Q2Y-HHiph03Y-4cXinC3FI发送信息：
+ 请选择电费账户(5分钟有效)：
+1:50B0723
+2:6010921
+
+----------------------
+输入0返回主菜单
+2024-07-24 02:05:27 执行sql 
+			INSERT INTO wechat_send_history (
+				wechat_id,
+				type,
+				datetime,
+				content
+			)
+			VALUES
+				(
+					'oTYqx6Q2Y-HHiph03Y-4cXinC3FI',
+					'menu',
+					'2024-07-24 02:05:27',
+					'请选择电费账户(5分钟有效)：
+1:50B0723
+2:6010921
+
+----------------------
+输入0返回主菜单'
+				)
+
+			
+2024-07-24 02:05:31 接收到POST请求
+2024-07-24 02:05:31 http://weixin.xiayukun.asia:444/?signature=e59ed87f41891b0a87de4cda5a8611874f74826c&timestamp=1721757930&nonce=1518717836&openid=oTYqx6Q2Y-HHiph03Y-4cXinC3FI
+2024-07-24 02:05:31 Query:{"signature":"e59ed87f41891b0a87de4cda5a8611874f74826c","timestamp":"1721757930","nonce":"1518717836","openid":"oTYqx6Q2Y-HHiph03Y-4cXinC3FI"}
+2024-07-24 02:05:31 Body:{"xml":{"tousername":["gh_df4e42db796c"],"fromusername":["oTYqx6Q2Y-HHiph03Y-4cXinC3FI"],"createtime":["1721757930"],"msgtype":["text"],"content":["2"],"msgid":["24649648159272865"]}}
+2024-07-24 02:05:31 来文字消息了：2
+2024-07-24 02:05:31 执行sql 
+				INSERT INTO wechat_event (
+					wechat_id,
+					event_id,
+					datetime,
+					msgid,
+					content
+				)
+				VALUES
+					(
+						'oTYqx6Q2Y-HHiph03Y-4cXinC3FI',
+						'text',
+						'2024-07-24 02:05:31',
+						'24649648159272865',
+						'2'
+					)
+		
+2024-07-24 02:05:31 向oTYqx6Q2Y-HHiph03Y-4cXinC3FI发送信息：
+ 未避免您的账户地址被滥用，已对链接进行加密，并进行登入时间限制。请点击以下链接进行跳转,5分钟内有效：
+https://mp.xiayukun.asia/recharge/632ed2f7-620a-417e-8e00-29ad97310f63
+
+----------------------
+输入0返回主菜单
+2024-07-24 02:05:31 执行sql 
+			INSERT INTO wechat_send_history (
+				wechat_id,
+				type,
+				datetime,
+				content
+			)
+			VALUES
+				(
+					'oTYqx6Q2Y-HHiph03Y-4cXinC3FI',
+					'end',
+					'2024-07-24 02:05:31',
+					'未避免您的账户地址被滥用，已对链接进行加密，并进行登入时间限制。请点击以下链接进行跳转,5分钟内有效：
+https://mp.xiayukun.asia/recharge/632ed2f7-620a-417e-8e00-29ad97310f63
+
+----------------------
+输入0返回主菜单'
+				)
+
+			
+2024-07-24 02:05:51 接收到GET请求
+2024-07-24 02:05:51 http://weixin.xiayukun.asia:444/recharge/632ed2f7-620a-417e-8e00-29ad97310f63
+2024-07-24 02:05:51 Query:{}
+2024-07-24 02:05:51 Body:{}
+2024-07-24 02:05:55 接收到GET请求
+2024-07-24 02:05:55 http://weixin.xiayukun.asia:444/recharge/632ed2f7-620a-417e-8e00-29ad97310f63
+2024-07-24 02:05:55 Query:{}
+2024-07-24 02:05:55 Body:{}
+2024-07-24 02:06:01 接收到GET请求
+2024-07-24 02:06:01 http://weixin.xiayukun.asia:444/recharge/632ed2f7-620a-417e-8e00-29ad97310f63
+2024-07-24 02:06:01 Query:{}
+2024-07-24 02:06:01 Body:{}
+2024-07-24 03:30:34 接收到GET请求
+2024-07-24 03:30:34 http://weixin.xiayukun.asia:444/recharge/1
+2024-07-24 03:30:34 Query:{}
+2024-07-24 03:30:34 Body:{}
+2024-07-24 06:10:03 接收到GET请求
+2024-07-24 06:10:03 http://weixin.xiayukun.asia:444/images/default.png
+2024-07-24 06:10:03 Query:{}
+2024-07-24 06:10:03 Body:{}
+2024-07-24 06:10:25 接收到GET请求
+2024-07-24 06:10:25 http://weixin.xiayukun.asia:444/static/image/logo2.png
+2024-07-24 06:10:25 Query:{}
+2024-07-24 06:10:25 Body:{}
+2024-07-24 06:10:43 接收到GET请求
+2024-07-24 06:10:43 http://weixin.xiayukun.asia:444/themes/custom/ahaspeed/favicon.ico
+2024-07-24 06:10:43 Query:{}
+2024-07-24 06:10:43 Body:{}
+2024-07-24 06:10:59 接收到GET请求
+2024-07-24 06:10:59 http://weixin.xiayukun.asia:444/favicon.ico
+2024-07-24 06:10:59 Query:{}
+2024-07-24 06:10:59 Body:{}
+2024-07-24 06:11:16 接收到GET请求
+2024-07-24 06:11:16 http://weixin.xiayukun.asia:444/image/favicon.png
+2024-07-24 06:11:16 Query:{}
+2024-07-24 06:11:16 Body:{}
+2024-07-24 06:11:33 接收到GET请求
+2024-07-24 06:11:33 http://weixin.xiayukun.asia:444/image/favicon.ico
+2024-07-24 06:11:33 Query:{}
+2024-07-24 06:11:33 Body:{}
+2024-07-24 06:11:45 接收到GET请求
+2024-07-24 06:11:45 http://weixin.xiayukun.asia:444/images/log1.png
+2024-07-24 06:11:45 Query:{}
+2024-07-24 06:11:45 Body:{}
+2024-07-24 06:12:15 接收到GET请求
+2024-07-24 06:12:15 http://weixin.xiayukun.asia:444/details/images/favicon.ico
+2024-07-24 06:12:15 Query:{}
+2024-07-24 06:12:15 Body:{}
+2024-07-24 06:13:47 接收到GET请求
+2024-07-24 06:13:47 http://weixin.xiayukun.asia:444/statics/abc/images/tu/abcpppin_03.png
+2024-07-24 06:13:47 Query:{}
+2024-07-24 06:13:47 Body:{}
+2024-07-24 06:14:09 接收到GET请求
+2024-07-24 06:14:09 http://weixin.xiayukun.asia:444/images/pc/logo.png
+2024-07-24 06:14:09 Query:{}
+2024-07-24 06:14:09 Body:{}
+2024-07-24 06:14:26 接收到GET请求
+2024-07-24 06:14:26 http://weixin.xiayukun.asia:444/images/favicon-196x196.png
+2024-07-24 06:14:26 Query:{}
+2024-07-24 06:14:26 Body:{}
+2024-07-24 06:14:36 接收到GET请求
+2024-07-24 06:14:36 http://weixin.xiayukun.asia:444/images/favicon.ico
+2024-07-24 06:14:36 Query:{}
+2024-07-24 06:14:36 Body:{}
+2024-07-24 06:14:45 接收到GET请求
+2024-07-24 06:14:45 http://weixin.xiayukun.asia:444/res-content/uploads/2018/11/81936297501704dd985e8ce84cb4a844.png
+2024-07-24 06:14:45 Query:{}
+2024-07-24 06:14:45 Body:{}
+2024-07-24 06:14:57 接收到GET请求
+2024-07-24 06:14:57 http://weixin.xiayukun.asia:444/static/picture/2021-05-1812.png
+2024-07-24 06:14:57 Query:{}
+2024-07-24 06:14:57 Body:{}
+2024-07-24 06:15:08 接收到GET请求
+2024-07-24 06:15:08 http://weixin.xiayukun.asia:444/recharge/f7aad083-2e8a-47a5-832e-9cac0d923742
+2024-07-24 06:15:08 Query:{}
+2024-07-24 06:15:08 Body:{}
+2024-07-24 06:15:48 接收到GET请求
+2024-07-24 06:15:48 http://weixin.xiayukun.asia:444/static/picture/logo_jg2.png
+2024-07-24 06:15:48 Query:{}
+2024-07-24 06:15:48 Body:{}
+2024-07-24 06:15:55 接收到GET请求
+2024-07-24 06:15:55 http://weixin.xiayukun.asia:444/favicon.png
+2024-07-24 06:15:55 Query:{}
+2024-07-24 06:15:55 Body:{}
+2024-07-24 06:16:01 接收到GET请求
+2024-07-24 06:16:01 http://weixin.xiayukun.asia:444/theme/Bob-Theme-Argon/favicon.ico
+2024-07-24 06:16:01 Query:{}
+2024-07-24 06:16:01 Body:{}
+2024-07-24 06:16:24 接收到GET请求
+2024-07-24 06:16:24 http://weixin.xiayukun.asia:444/
+2024-07-24 06:16:24 Query:{}
+2024-07-24 06:16:24 Body:{}
+2024-07-24 06:17:23 接收到GET请求
+2024-07-24 06:17:23 http://weixin.xiayukun.asia:444/
+2024-07-24 06:17:23 Query:{}
+2024-07-24 06:17:23 Body:{}
+2024-07-24 06:17:52 接收到GET请求
+2024-07-24 06:17:52 http://weixin.xiayukun.asia:444/fb
+2024-07-24 06:17:52 Query:{}
+2024-07-24 06:17:52 Body:{}
+2024-07-24 07:10:00 ------开始定时任务执行---------
+2024-07-24 07:10:00 执行sql 
+			SELECT pu.id AS power_id, pu.balance, pu.kwh_sum, pu.remark, pu.update_date, pd.date AS day_date, pd.kwh AS day_kwh, pd.amount AS day_amount, pr.datetime AS recharge_datetime, pr.amount AS amount
+			FROM power_user pu
+			LEFT JOIN (
+				SELECT t1.power_id,t1.date, t1.kwh, t1.amount
+				FROM power_day t1
+				INNER JOIN (SELECT power_id,MAX(date) AS max_date FROM power_day GROUP BY power_id) AS t2 ON t1.power_id = t2.power_id AND t1.date = t2.max_date
+			) pd ON pu.id = pd.power_id
+			LEFT JOIN (
+				SELECT t1.power_id, t1.datetime, t1.amount 
+				FROM power_recharge t1 
+				INNER JOIN (SELECT power_id, MAX(datetime) AS max_datetime FROM power_recharge GROUP BY power_id) AS t2 ON t1.power_id = t2.power_id AND t1.datetime = t2.max_datetime
+			) pr ON pr.power_id = pu.id
+			
+		
+2024-07-24 07:10:00 ###开始记录电费数据： 6010921
+2024-07-24 07:10:00 执行sql 
+			UPDATE power_user
+			SET balance = 24.5,
+			kwh_sum = 2717.02,
+			update_date = '2024-07-24'
+			WHERE
+				id = '6010921'
+			
+2024-07-24 07:10:00 执行sql 
+			INSERT INTO power_day (power_id, date, kwh, amount)
+			VALUES
+				('6010921', '2024-07-23', 10.01, 7.51)
+	
+2024-07-24 07:10:00 ###结束记录电费数据： 6010921
+2024-07-24 07:10:03 ###开始记录电费数据： 50B0723
+2024-07-24 07:10:03 执行sql 
+			UPDATE power_user
+			SET balance = 37.2875,
+			kwh_sum = 2103.5,
+			update_date = '2024-07-24'
+			WHERE
+				id = '50B0723'
+			
+2024-07-24 07:10:03 执行sql 
+			INSERT INTO power_day (power_id, date, kwh, amount)
+			VALUES
+				('50B0723', '2024-07-23', 5.95, 4.46)
+	
+2024-07-24 07:10:03 ###结束记录电费数据： 50B0723
+2024-07-24 07:10:06 ------结束定时任务执行---------
 {"level":"error","message":"Forever detected script was killed by signal: SIGKILL"}

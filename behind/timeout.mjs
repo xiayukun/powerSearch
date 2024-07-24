@@ -17,7 +17,7 @@ async function timeTask () {
 	for (let i = 0; i < power_list.length; i++) {
 		const power = power_list[i]
 		try {
-			await countOneDay(power, today)
+			await countOneDay(power, today, true)
 		} catch (error) {
 			$log(error)
 		}
