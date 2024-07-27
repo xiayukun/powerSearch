@@ -139,7 +139,7 @@ export async function get_powers_day (data) {
 export async function get_powers_and_wechat_by_two_id ({ power_id, wechat_id }) {
 	return $pool.query2(
 		format_sql(`
-			SELECT mwp.openSMS, wu.SMS-sms_count as SMS, mwp.lowSMS, mwp.remark AS remark
+			SELECT mwp.openSMS, wu.SMS-COALESCE(sms_count,0) as SMS, mwp.lowSMS, mwp.remark AS remark
 			FROM wechat_user wu
 			INNER JOIN mapping_wechat_power mwp ON mwp.wechat_id = wu.id
 			LEFT JOIN(
