@@ -19,7 +19,7 @@ export default async function handlerSendSMS ({ phone, power_id_remark, balance,
 	const runtime = new Util.RuntimeOptions({})
 	const res = await client.sendSmsWithOptions(sendSmsRequest, runtime)
 	if (res.body.code !== 'OK') {
+		$log('短信发送失败')
 		throw Error(res.body.message)
 	}
-	$log(res)
 }

@@ -81,16 +81,16 @@ export async function event_text (req, res) {
 // 图片消息
 export function event_image (req, res) {
 	$log(`来图片消息了：${req.body.xml.picurl[0]}`)
-	insert_wechat_event(req.body.xml)
-	// 发送回复消息
-	res.type('application/xml')
-	res.send(
-		$builder.buildObject2({
-			ToUserName: req.body.xml.fromusername[0],
-			FromUserName: req.body.xml.tousername[0],
-			CreateTime: new Date().getTime(),
-			MsgType: 'text',
-			Content: `你发${req.body.xml.picurl[0]}干嘛？找我干啥啊！`
-		})
-	)
+	// insert_wechat_event(req.body.xml)
+	// // 发送回复消息
+	// res.type('application/xml')
+	// res.send(
+	// 	$builder.buildObject2({
+	// 		ToUserName: req.body.xml.fromusername[0],
+	// 		FromUserName: req.body.xml.tousername[0],
+	// 		CreateTime: new Date().getTime(),
+	// 		MsgType: 'text',
+	// 		Content: `你发${req.body.xml.picurl[0]}干嘛？找我干啥啊！`
+	// 	})
+	// )
 }

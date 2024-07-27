@@ -56,6 +56,7 @@ export async function refrshRecharge ({ power_id, recharge_datetime }) {
 	// 更新充值记录和余额电量
 	const addRechargeList = data.payList.filter((i) => !recharge_datetime || moment(recharge_datetime).isBefore(moment(i.datetime)))
 	if (addRechargeList.length) {
+		$log('获取到充值记录', power_id)
 		await update_balance({ power_id, balance: data.balance })
 		await insert_power_recharge(addRechargeList.map((i) => ({ ...i, power_id })))
 	}

@@ -1,4 +1,4 @@
-import verify from './wechat/verify.mjs'
+import crypto from 'crypto'
 import { event_subscribe, event_unsubscribe, event_text, event_image } from './wechat/event.mjs'
 import { to_recharge, web_api_bind, web_api_checkWechat } from './wechat/web.mjs'
 
@@ -18,7 +18,20 @@ $service.post1 = function (path, fun) {
 
 $service.get('/', (req, res) => {
 	if (req.query.echostr) {
-		verify(req, res)
+		const signature = req.query.signature
+		const timestamp = req.query.timestamp
+		const nonce = req.query.nonce
+		const echostr = req.query.echostr
+		const token = '718170'
+		const list = [token, nonce, timestamp].sort().join('')
+		const sha1Str = crypto.createHash('sha1').update(list).digest('hex')
+		if (sha1Str === signature) {
+			$log('验证成功返回：', echostr)
+			res.send(echostr)
+		} else {
+			$log('验证失败返回：', 'error')
+			res.send('error')
+		}
 	} else {
 		res.send('找我干啥？')
 	}
