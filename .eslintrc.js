@@ -51,6 +51,8 @@ module.exports = {
 		$catch_all: true,
 		$sleep: true,
 		$menu: true,
-		$rechargeUrl: true
+		$rechargeUrl: true,
+		$config: true,
+		$borrowCode: true
 	}
 }

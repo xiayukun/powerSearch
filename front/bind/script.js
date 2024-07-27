@@ -24,13 +24,29 @@ if (!error) {
 			wechat_id: query.n
 		})
 	}).then(async (res) => {
+		const msg = await res.text()
 		if (!res.ok) {
-			error = await res.text()
-			alert(error)
+			alert(msg)
+			return
+		}
+		if (msg.length === 11) {
+			document.getElementById('phone').value = msg
 		}
 	})
 }
+document.getElementById('switch').onclick = function (e) {
+	const swi = document.getElementById('switch-section')
+	swi.className = swi.className ? '' : 'active'
+	if (swi.className) {
+		document.getElementById('phone').style = ''
+		document.getElementById('lowSMS').style = ''
+	} else {
+		document.getElementById('phone').style = 'display:none'
+		document.getElementById('lowSMS').style = 'display:none'
+	}
+}
 document.getElementById('submit').onclick = async () => {
+	document.getElementById('submit').disabled = true
 	if (error) {
 		alert(error)
 		return
@@ -43,6 +59,9 @@ document.getElementById('submit').onclick = async () => {
 		body: JSON.stringify({
 			username: document.getElementById('username').value,
 			password: document.getElementById('password').value,
+			openSMS: document.getElementById('switch-section').className ? 1 : 0,
+			phone: document.getElementById('phone').value,
+			lowSMS: document.getElementById('lowSMS').value,
 			wechat_id: query.n,
 			remark: document.getElementById('remark').value
 		})
@@ -53,4 +72,5 @@ document.getElementById('submit').onclick = async () => {
 		const msg = await res.text()
 		alert(msg)
 	}
+	document.getElementById('submit').disabled = false
 }

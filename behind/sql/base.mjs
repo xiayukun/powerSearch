@@ -17,6 +17,7 @@ global.$pool = mysql2.createPool({
 $pool.query2 = function () {
 	$log('执行sql', ...arguments)
 	return $pool.query(...arguments).catch((e) => {
-		$log('sql报错', ...arguments, e)
+		$log('sql报错')
+		throw e
 	})
 }

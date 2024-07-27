@@ -152,7 +152,64 @@ export function insert_wechat_send_history (sendObj) {
 					'${moment().format('yyyy-MM-DD HH:mm:ss')}',
 					'${sendObj.content || null}'
 				)
-
 			`)
+	)
+}
+// 修改手机号
+export function update_phone_by_wechat_id ({ wechat_id, phone }) {
+	return $pool.query2(format_sql(`update wechat_user set phone='${phone}' where id='${wechat_id}'`))
+}
+// 获取本人授权电费账户
+export function select_mapping_by_borrow_wechat_id ({ borrow_wechat_id, power_id }) {
+	return $pool.query2(format_sql(`select * from mapping_wechat_power where borrow_wechat_id='${borrow_wechat_id}' and power_id='${power_id}'`))
+}
+// 删除授权
+export function delete_mapping_by_borrow ({ borrow_wechat_id, wechat_id, power_id }) {
+	return $pool.query2(format_sql(`delete from mapping_wechat_power where borrow_wechat_id='${borrow_wechat_id}' and wechat_id='${wechat_id}' and power_id='${power_id}'`))
+}
+// 根据微信用户删除授权
+export function delete_mapping_by_wechat_borrow (borrow_wechat_id) {
+	return $pool.query2(format_sql(`delete from mapping_wechat_power where borrow_wechat_id='${borrow_wechat_id}'`))
+}
+// 根据微信用户和电费账户删除授权
+export function delete_mapping_by_wechat_and_power ({ borrow_wechat_id, power_id }) {
+	return $pool.query2(format_sql(`delete from mapping_wechat_power where borrow_wechat_id='${borrow_wechat_id}' and power_id='${power_id}'`))
+}
+// 填入发送短信
+export function insert_wechat_SMS ({ wechat_id, power_id, message, datetime }) {
+	return $pool.query2(
+		format_sql(`
+			INSERT into wechat_sms(wechat_id,power_id,message,datetime) values('${wechat_id}','${power_id}','${message}','${datetime}')
+		`)
+	)
+}
+// 查出来所有需要发短信的
+export function select_all_need_send_sms () {
+	return $pool.query2(
+		format_sql(`
+			select mwp.wechat_id, mwp.power_id, recharge_datetime, sms_count, SMS, phone, remark, balance, lowSMS as low_SMS from mapping_wechat_power mwp
+			INNER JOIN wechat_user wu on mwp.wechat_id=wu.id
+			INNER JOIN power_user pu on mwp.power_id = pu.id
+			LEFT JOIN(
+				SELECT power_id,MAX(datetime) as recharge_datetime
+				FROM power_recharge 
+				GROUP BY power_id
+			) pr on pr.power_id=mwp.power_id
+			LEFT JOIN(
+				select wechat_id,power_id,MAX(datetime) as sms_datetime from wechat_sms group by wechat_id,power_id
+			) smsd on smsd.power_id=mwp.power_id and smsd.wechat_id=mwp.wechat_id
+			LEFT JOIN(
+				select wechat_id,count(1) as sms_count from wechat_sms where YEAR (datetime) = YEAR (CURDATE()) AND MONTH (datetime) = MONTH (CURDATE()) group by wechat_id
+			) smsc on  smsc.wechat_id=mwp.wechat_id
+			where openSMS=1 and LENGTH(phone)=11 and lowSMS>balance and (sms_count is null or sms_count<SMS) and (sms_datetime is null or recharge_datetime> sms_datetime)
+		`)
+	)
+}
+// 查询手机号是否被绑定
+export function select_is_bind_phone ({ phone, wechat_id }) {
+	return $pool.query2(
+		format_sql(`
+			select 1 from wechat_user  where phone='${phone}' and id<>'${wechat_id}'
+		`)
 	)
 }

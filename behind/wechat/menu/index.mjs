@@ -30,13 +30,17 @@ export default async function repeatEventMenu (req) {
 			}
 		}
 	} else {
-		// 创建本次发送的对象
-		const sendObj = { wechat_id: req.body.xml.fromusername[0], type: 'menu', menu: { list: [] }, menu_params: {}, content: '' }
+		// 创建本次发送的对象,title是会显示在消息上方的
+		const sendObj = { wechat_id: req.body.xml.fromusername[0], type: 'menu', menu: { list: [] }, menu_params: { title: '' }, content: '', isDone: false }
 		sendAll.set(wechat_id, msgid, sendObj)
 		await sendMenu(sendObj, req.body.xml.content[0])
+		// 把title加在消息头
+		if (sendObj.menu_params.title) {
+			sendObj.content = sendObj.menu_params.title + '\n' + sendObj.content
+		}
 		if (sendObj.menu.list.length === 0 || sendObj.menu.list[0].parent_id !== 0) {
 			sendObj.content += '\n----------------------\n'
-			sendObj.content += '输入0返回主菜单'
+			sendObj.content += `${sendObj.type === 'end' ? '输入主菜单码或' : ''}输入0返回主菜单`
 		}
 		sendObj.isDone = true
 		sendAll.setBeforeMsg(wechat_id, msgid)
@@ -76,9 +80,14 @@ export async function sendMenu (sendObj, text, before_message) {
 			// text类型匹配
 			matchObj = beforeMenu.list.find((i) => i.type === 'text')
 		}
+		// 尝试匹配授权码
+		if (!matchObj && text.length === 16 && $borrowCode.get(text)) {
+			await clickMethods.handlerBorrow(text, sendObj)
+			return
+		}
 		if (!matchObj) {
 			// 没有匹配到所选
-			sendObj.content += '未匹配到选择，请重新输入：\n'
+			sendObj.content += '未匹配到选择，请重新输入(5分钟有效)：\n'
 			sendObj.menu.list = beforeMenu.list
 			createMessageByList(sendObj)
 		} else {

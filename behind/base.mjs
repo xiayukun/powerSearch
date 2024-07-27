@@ -1,12 +1,11 @@
 import './sql/base.mjs'
-import './util/index.mjs'
+import { async_fun } from './util/index.mjs'
 import express from 'express'
 import xmlparser from 'express-xml-bodyparser'
-import './timeout.mjs'
+await async_fun()
+import('./timeout.mjs')
 
-const PORT = 16853
 global.$service = express()
-
 $service.use(express.json())
 $service.use(express.urlencoded())
 $service.use(xmlparser())
@@ -30,6 +29,7 @@ $service.use((err, req, res, next) => {
 import('./collect.mjs')
 
 // 启动服务器并监听指定端口
+const PORT = 16853
 $service.listen(PORT, () => {
 	$log(`启动服务，端口是 ${PORT}`)
 })

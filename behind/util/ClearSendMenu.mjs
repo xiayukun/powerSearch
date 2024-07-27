@@ -59,9 +59,5 @@ export default class ClearSendMenu {
 			}
 		}
 		this.clearTime = nowTime
-		$log(
-			'-----------目前存储消息数量：',
-			[...this.data.values()].reduce((i, n) => i + n.size, 0)
-		)
 	}
 }

@@ -1,4 +1,5 @@
-import { delete_wechat, insert_wechat, insert_wechat_event, delete_mapping_by_wechat, select_powerCount_by_wechat, delete_power_ids, insert_wechat_send_history } from '../sql/wechat.mjs'
+import { createMessageByList, getMenuByParentId } from '../util/index.mjs'
+import { delete_wechat, insert_wechat, insert_wechat_event, delete_mapping_by_wechat, select_powerCount_by_wechat, delete_power_ids, insert_wechat_send_history, delete_mapping_by_wechat_borrow } from '../sql/wechat.mjs'
 import getMenuBack from './menu/index.mjs'
 
 // 关注
@@ -8,21 +9,24 @@ export function event_subscribe (req, res) {
 	insert_wechat_event(req.body.xml)
 	// 发送消息
 	res.type('application/xml')
+	const sendObj = { menu: { list: getMenuByParentId(0) }, content: '' }
+	createMessageByList(sendObj)
 	res.send(
 		$builder.buildObject2({
 			ToUserName: req.body.xml.fromusername[0],
 			FromUserName: req.body.xml.tousername[0],
 			CreateTime: new Date().getTime(),
 			MsgType: 'text',
-			Content: `	朗悦公寓交电费用法过于麻烦，并且不会没电费提醒，所以特此做个提醒功能，方便自己，如有侵权，联系我马上删除。
-	请点击以下链接进行电费账户绑定并进行提醒设置：
+			Content:
+				`悦都汇公寓电费提醒使用步骤：
+一.绑定账户
+二.开通短信提醒
+三.快速充值(免密)
+四.查询账单
+五.自行探索
+绑定地址：
 https://mp.xiayukun.asia/bind/index.html?n=${req.body.xml.fromusername[0]}
-或者请输入以下回复(5分钟有效)：
-1:查询电费余额
-2:查询电费详单
-3:电费充值(跳转物业地址)
-4:管理电费账户
-0:绑定账户(可绑定多个账户)`
+或输入以下回复：\n` + sendObj.content
 		})
 	)
 }
@@ -32,6 +36,7 @@ export async function event_unsubscribe (req, res) {
 	$log(`有人取消关注了：${wechat_id}`)
 	res.send('')
 	insert_wechat_event(req.body.xml)
+	await delete_mapping_by_wechat_borrow(wechat_id)
 	const powerCount = await select_powerCount_by_wechat(wechat_id)
 	await delete_mapping_by_wechat(wechat_id)
 	const ids = powerCount[0].filter((i) => i.count === 1).map((i) => i.power_id)

@@ -8,11 +8,20 @@
 </head>
 <body>
     <h1>账号绑定</h1>
-	<h3>目前只支持西都汇、南苑公寓、悦都汇、公园府悦融苑绑定</h3>
-	<input placeholder="请输入用户名" id="username"><br>
-	<input placeholder="请输入密码" type="password" id="password"><br>
-	<input placeholder="请输入账号备注，方便查找" id="remark"><br>
-	<button id="submit">提交</button>
-	<script src="script.js?t=1"></script>
+	<h3>请输入悦都汇电费账号密码</h3>
+	<input placeholder="请输入用户名" id="username">
+	<input placeholder="请输入密码" type="password" id="password">
+	<input placeholder="房间备注，绑定多账号使用(可不输)" id="remark">
+	<div id="switch">
+		<label>短信通知</label>
+		<section id="switch-section" class="active"><span></span></section>
+	</div>
+	<input placeholder="请输入短信通知的手机号" id="phone">
+	<input placeholder="低于(1-50元)短信通知(默认20元)" id="lowSMS">
+	<button id="submit">
+		<span role="img" aria-label="loading" class="loading"><svg focusable="false" data-icon="loading" width="1em" height="1em" fill="currentColor" aria-hidden="true" viewBox="0 0 1024 1024"><path d="M988 548c-19.9 0-36-16.1-36-36 0-59.4-11.6-117-34.6-171.3a440.45 440.45 0 00-94.3-139.9 437.71 437.71 0 00-139.9-94.3C629 83.6 571.4 72 512 72c-19.9 0-36-16.1-36-36s16.1-36 36-36c69.1 0 136.2 13.5 199.3 40.3C772.3 66 827 103 874 150c47 47 83.9 101.8 109.7 162.7 26.7 63.1 40.2 130.2 40.2 199.3.1 19.9-16 36-35.9 36z"></path></svg><!----></span>
+		提交
+	</button>
+	<script src="script.js?t=2"></script>
 </body>
 </html>

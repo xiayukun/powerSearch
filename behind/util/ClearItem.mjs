@@ -18,6 +18,11 @@ export default class ClearItem {
 		this.data[key] = { time: new Date().getTime(), value }
 	}
 
+	// 手动删除
+	delete (key) {
+		delete this.data[key]
+	}
+
 	clearObject () {
 		const now_time = new Date().getTime()
 		for (const key in this.data) {
