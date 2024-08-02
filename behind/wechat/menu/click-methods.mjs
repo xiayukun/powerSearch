@@ -203,7 +203,7 @@ export async function update_phone (data, sendObj) {
 		return false
 	}
 	await update_phone_by_wechat_id({ wechat_id, phone })
-	sendObj.content = `>>>>已修改通知手机号为：${phone}，您可以前往《管理电费账户》去开启短信通知。<<<<`
+	sendObj.content = `>>>>已修改通知手机号为：${phone}，您可以输入《6.更多(短信、账户)》去开启短信通知。<<<<`
 	sendObj.type = 'end'
 	return false
 }
