@@ -26,7 +26,7 @@ async function powerRecord () {
 	$log('------结束定时任务执行---------')
 	setTimeout(function () {
 		powerRecord()
-	}, timeUntilNext(7, 10))
+	}, timeUntilNext(8, 10))
 }
 powerRecord()
 // 定时发短信

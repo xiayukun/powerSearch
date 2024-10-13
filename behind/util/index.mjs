@@ -66,12 +66,12 @@ export async function throlle (res) {
 	beforeTime = new Date().getTime()
 }
 
-// 查看理下次7:10还有多久
+// 查看理下次指定时间还有多久
 export function timeUntilNext (hours, minutes) {
 	const now = moment()
 	const nextMorning = moment().startOf('day').add(hours, 'hours').add(minutes, 'minutes')
 
-	// 如果当前时间已经超过了今天的7:10，那么计算明天的7:10
+	// 如果当前时间已经超过了今天的指定时间，那么计算明天的指定时间
 	if (now > nextMorning) {
 		nextMorning.add(1, 'day')
 	}
