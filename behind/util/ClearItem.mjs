@@ -1,7 +1,7 @@
 // 会自动清理数据的对象,通过构造函数传入过期时间创建
 export default class ClearItem {
-	constructor (clear_time = 300) {
-		this.clear_time = clear_time
+	constructor (time = 300) {
+		this.clear_time = time * 1000
 		this.data = {}
 	}
 
@@ -26,7 +26,7 @@ export default class ClearItem {
 	clearObject () {
 		const now_time = new Date().getTime()
 		for (const key in this.data) {
-			if (this.data[key] && this.data[key] instanceof Object && this.data[key].datetime && now_time - this.data[key].datetime > this.clear_time) {
+			if (this.data[key] && this.data[key] instanceof Object && this.data[key].time && now_time - this.data[key].time > this.clear_time) {
 				delete this.data[key]
 			}
 		}
