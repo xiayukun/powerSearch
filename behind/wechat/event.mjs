@@ -25,7 +25,7 @@ export function event_subscribe (req, res) {
 四.查询账单
 五.自行探索
 绑定地址：
-https://mp.xiayukun.asia/bind/index.html?n=${req.body.xml.fromusername[0]}
+https://mp.213132.xyz/bind/index.html?n=${req.body.xml.fromusername[0]}
 或输入以下回复：\n` + sendObj.content
 		})
 	)

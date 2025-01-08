@@ -80,7 +80,7 @@ export async function power_recharge (data, sendObj) {
 	const uid = uuidv4()
 	$rechargeUrl.set(uid, power_id)
 	sendObj.content += '未避免您的账户地址被滥用，已对链接进行加密，并进行登入时间限制。请点击以下链接进行跳转,5分钟内有效：\n'
-	sendObj.content += `https://mp.xiayukun.asia/recharge/${uid}\n`
+	sendObj.content += `https://mp.213132.xyz/recharge/${uid}\n`
 	sendObj.type = 'end'
 	return false
 }
@@ -88,7 +88,7 @@ export async function power_recharge (data, sendObj) {
 // 去往绑定页面
 export async function to_bind_power (data, sendObj) {
 	sendObj.content += '请点击以下链接进行电费账户绑定：'
-	sendObj.content += `https://mp.xiayukun.asia/bind/index.html?n=${sendObj.wechat_id}`
+	sendObj.content += `https://mp.213132.xyz/bind/index.html?n=${sendObj.wechat_id}`
 	sendObj.type = 'end'
 	return false
 }
