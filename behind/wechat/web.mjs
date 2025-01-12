@@ -45,10 +45,9 @@ export async function web_api_bind (req, res) {
 	formData.append('Password', password)
 	const isLogin = await axios.post('http://www.langyuewy.com/PhoneAPI.ashx', formData)
 	if (isLogin.data === '') {
-		res.status(400).send('未收到登录结果，可能是被物业限制了，请先前往物业公众号进行登录成功后，再进行绑定！')
-		return
-	}
-	if (!isLogin.data || isLogin.data.code !== 1) {
+		// res.status(400).send('未收到登录结果，可能是被物业限制了，请先前往物业公众号进行登录成功后，再进行绑定！')
+		// return
+	} else if (!isLogin.data || isLogin.data.code !== 1) {
 		res.status(400).send('账号密码输入错误，请重新输入')
 		return
 	}
