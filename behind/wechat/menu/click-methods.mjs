@@ -79,6 +79,9 @@ export async function power_recharge (data, sendObj) {
 	}
 	const uid = uuidv4()
 	$rechargeUrl.set(uid, power_id)
+
+	sendObj.content += '为了防止充值失败，请先点击以下链接进行授权，打开页面后关闭，再打开第二个链接即可充值：\n'
+	sendObj.content += 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxfe69b2004eeb6597&redirect_uri=http%3a%2f%2fwww.langyuewy.com%2fLogin1.aspx&response_type=code&scope=snsapi_base&state=STATE&connect_redirect=1#wechat_redirect\n'
 	sendObj.content += '未避免您的账户地址被滥用，已对链接进行加密，并进行登入时间限制。请点击以下链接进行跳转,5分钟内有效：\n'
 	sendObj.content += `https://mp.xiayukun.asia/recharge/${uid}\n`
 	sendObj.type = 'end'
