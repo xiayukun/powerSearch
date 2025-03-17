@@ -21,8 +21,8 @@ export async function countOneDay ({ power_id, update_date, recharge_datetime, d
 		if (addRechargeList.length) {
 			await insert_power_recharge(addRechargeList.map((i) => ({ ...i, power_id })))
 		}
-		// 判断上一次记录是否是昨天的
-		if (update_date && moment(update_date).isBefore(moment(today)) && moment(update_date).add(1, 'days').isSame(moment(today)) && (!day_date || moment(day_date).isBefore(moment(update_date)))) {
+		// 判断上一次记录是否是昨天之前的--2025-3-17更新：删除判断update是昨天的判断，要不然又一天没记录，后面就全都记录不了了
+		if (update_date && moment(update_date).isBefore(moment(today)) && (!day_date || moment(day_date).isBefore(moment(update_date)))) {
 			// 如果是昨天的，就开始计算昨天花了多少电和电费
 			const yestday_kwh = Number((data.kwh - kwh_sum).toFixed(2))
 			const yestday_amount = Number((balance - data.balance + addRechargeList.reduce((sum, i) => (sum += Number(i.amount)), 0)).toFixed(2))
