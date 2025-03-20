@@ -15,9 +15,18 @@ global.$pool = mysql2.createPool({
 	keepAliveInitialDelay: 0
 })
 $pool.query2 = function () {
-	$log('执行sql', ...arguments)
-	return $pool.query(...arguments).catch((e) => {
+	const ars = [...arguments]
+	$log('执行sql', ...ars)
+	return $pool.query(...ars).catch((e) => {
 		$log('sql报错')
+		if (typeof ars[ars.length - 1] !== 'number') {
+			ars.push(0)
+		}
+		if (ars[ars.length - 1] < 3) {
+			$log('-----------正在重新执行报错sql-----------')
+			ars[ars.length - 1] = ars[ars.length - 1] + 1
+			$pool.query2(...ars)
+		}
 		throw e
 	})
 }

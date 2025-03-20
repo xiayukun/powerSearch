@@ -15,18 +15,27 @@ async function powerRecord () {
 	}
 	$log('------开始定时任务执行---------')
 	const power_list = (await select_all_power_user_data_by_last_date())[0]
+	let errNum = 0
 	for (let i = 0; i < power_list.length; i++) {
 		const power = power_list[i]
 		try {
 			await countOneDay(power, today, true)
 		} catch (error) {
 			$log(error)
+			errNum++
 		}
 	}
 	$log('------结束定时任务执行---------')
-	setTimeout(function () {
-		powerRecord()
-	}, timeUntilNext(9, 30))
+	if (errNum >= 5) {
+		$log('========检测到多次记录电费错误，半小时后重试=========')
+		setTimeout(function () {
+			powerRecord()
+		}, 30 * 60 * 1000)
+	} else {
+		setTimeout(function () {
+			powerRecord()
+		}, timeUntilNext(7, 30))
+	}
 }
 powerRecord()
 // 定时发短信
